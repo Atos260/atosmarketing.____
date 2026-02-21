@@ -3,410 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atos Miranda | Especialista em Posicionamento Digital</title>
-    <meta name="description" content="Especialista em posicionamento digital para pequenos negócios. Criação de sites estratégicos e estruturação de Instagram.">
+    <title>Atos Miranda | Posicionamento Elite 3D</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fontes Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
+        :root {
+            --tesla-blue: #3b82f6;
+            --tesla-dark: #020617;
+            --neon-glow: #60a5fa;
+            --user-color: #3b82f6; 
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #020617;
+            background-color: var(--tesla-dark);
             color: #ffffff;
             overflow-x: hidden;
+            perspective: 2000px;
         }
+
+        #three-canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Título Neon Dinâmico Restaurado */
+        .neon-line-text {
+            position: relative;
+            display: inline-block;
+            color: #fff;
+        }
+
+        .neon-line-text::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 5px;
+            background: var(--tesla-blue);
+            box-shadow: 0 0 25px var(--neon-glow), 0 0 50px var(--tesla-blue);
+            animation: neon-flow 2.5s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes neon-flow {
+            0% { width: 0; left: 0; }
+            100% { width: 100%; left: 0; }
+        }
+
         .glass {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .text-gradient {
-            background: linear-gradient(to right, #3b82f6, #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .interactive-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .interactive-btn:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-        }
-        
-        .reveal {
-            opacity: 0; transform: translateY(30px);
-            transition: all 0.8s ease-out;
-        }
-        .reveal.active {
-            opacity: 1; transform: translateY(0);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Protótipo do Site Interativo */
-        .browser-mockup {
-            background: #0f172a;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 2px solid rgba(59, 130, 246, 0.4);
-            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.9);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .browser-screen {
-            background: #ffffff;
-            height: 600px;
-            overflow-y: auto;
-            color: #0f172a;
-            position: relative;
-            scrollbar-width: thin;
-            scrollbar-color: #3b82f6 #f1f5f9;
+        /* Efeito 3D Master (Tilt) */
+        .tilt-element {
+            transition: transform 0.15s ease-out;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
-        .proto-nav {
-            background: #ffffff;
-            padding: 20px 28px;
+        .tesla-btn {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .tesla-btn:hover {
+            box-shadow: 0 0 45px rgba(59, 130, 246, 0.7);
+            transform: translateY(-8px) scale(1.05);
+        }
+
+        /* WhatsApp Fixo */
+        .whatsapp-tesla {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: #25d366;
+            width: 65px;
+            height: 65px;
+            border-radius: 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #f1f5f9;
-            position: sticky;
-            top: 0;
-            z-index: 40;
+            justify-content: center;
+            box-shadow: 0 15px 40px rgba(37, 211, 102, 0.5);
+            animation: w-pulse 2s infinite;
         }
 
-        .proto-whatsapp {
-            position: sticky;
-            float: right;
-            bottom: 25px; right: 25px;
-            background: #25D366; color: white;
-            padding: 16px; border-radius: 50%;
-            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
-            animation: pulse-green 2s infinite;
-            z-index: 50; cursor: pointer;
-            margin-top: -60px;
-            margin-right: 20px;
+        @keyframes w-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
-        @keyframes pulse-green {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
-
-        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
-        .tab-content.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .img-container {
-            position: relative;
-            overflow: hidden;
+        /* Browser Mockup Customizado */
+        .browser-mockup {
+            background: #ffffff;
             border-radius: 40px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25);
+            overflow: hidden;
+            color: #0f172a;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8);
         }
 
-        /* Vitrine de Produtos */
+        .user-theme-bg { background-color: var(--user-color); }
+        .user-theme-text { color: var(--user-color); }
+        .user-theme-border { border-color: var(--user-color); }
+
         .product-carousel {
             display: flex;
+            gap: 20px;
             overflow-x: auto;
-            gap: 16px;
-            padding: 20px 0;
+            padding: 20px 5px;
             scroll-snap-type: x mandatory;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
-        .product-card {
-            min-width: 200px;
+        .product-carousel::-webkit-scrollbar { display: none; }
+        
+        .product-card-sim {
+            flex: 0 0 80%;
+            scroll-snap-align: center;
             background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            scroll-snap-align: start;
-            transition: all 0.3s;
+            border-radius: 30px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            transition: border 0.3s;
         }
-        .product-card:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
+
+        @media (min-width: 768px) {
+            .product-card-sim { flex: 0 0 250px; }
         }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 100%;
+            height: 55px;
+            cursor: pointer;
+            background: none;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 15px; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-    <!-- Navegação Principal -->
-    <nav class="fixed top-0 w-full z-50 glass py-4">
+    <div id="three-canvas-container"></div>
+
+    <a href="https://wa.me/5533984684394" target="_blank" class="whatsapp-tesla">
+        <i data-lucide="message-circle" class="w-8 h-8 text-white"></i>
+    </a>
+
+    <!-- Nav Principal -->
+    <nav class="fixed top-0 w-full z-[100] glass py-5">
         <div class="container mx-auto px-6 flex justify-between items-center">
-            <span class="text-xl font-black tracking-tighter">ATOS <span class="text-[#3b82f6]">MIRANDA</span></span>
-            <div class="hidden md:flex space-x-8 font-medium text-sm uppercase tracking-widest items-center">
-                <a href="#sobre-atos" class="hover:text-[#3b82f6] transition-colors">Sobre</a>
-                <a href="#simulador" class="hover:text-[#3b82f6] transition-colors">Simulador</a>
-                <a href="#meus-servicos" class="hover:text-[#3b82f6] transition-colors">Serviços</a>
-                <a href="javascript:void(0)" onclick="irParaWhatsApp()" class="bg-[#3b82f6] px-5 py-2 rounded-full interactive-btn text-xs font-bold text-white">Contato</a>
+            <span class="text-xl md:text-2xl font-black italic uppercase tracking-tighter">ATOS <span class="text-blue-500">MIRANDA</span></span>
+            <div class="flex gap-4 md:gap-10 items-center">
+                <a href="#sobre" class="hidden md:block text-[9px] font-black uppercase tracking-widest hover:text-blue-400">Sobre</a>
+                <a href="#simulador" class="hidden md:block text-[9px] font-black uppercase tracking-widest hover:text-blue-400">Análise</a>
+                <button onclick="window.location.href='#simulador'" class="tesla-btn px-6 py-3 rounded-xl text-[9px]">Análise VIP</button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center pt-28 overflow-hidden">
-        <div class="absolute top-1/4 -left-20 w-96 h-96 bg-[#3b82f6] opacity-10 blur-[120px]"></div>
-        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+    <!-- Hero -->
+    <section class="min-h-screen flex items-center pt-24 px-6">
+        <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div class="reveal">
-                <h2 class="text-[#3b82f6] font-bold tracking-[0.3em] mb-4 uppercase text-sm">Design de Autoridade</h2>
-                <h1 class="text-5xl md:text-7xl font-black leading-tight mb-6">
-                    Sua marca <br><span class="text-gradient">No Próximo Nível.</span>
+                <div class="inline-block bg-blue-600/20 text-blue-400 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6 border border-blue-500/30">
+                    Excelência & Poder
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black leading-none mb-6">
+                    <span class="neon-line-text">POSICIONE</span> <br> 
+                    <span class="text-blue-500 italic">COM ELITE.</span>
                 </h1>
-                <p class="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
-                    Não tenha apenas um site. Tenha uma plataforma de vendas que posiciona você como a maior referência do seu mercado.
+                <p class="text-gray-400 text-lg mb-10 max-w-md font-medium leading-relaxed">
+                    Elevando sua marca ao topo através de ecossistemas digitais imersivos e posicionamento estratégico de autoridade.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <button onclick="irParaWhatsApp()" class="bg-[#3b82f6] text-white px-8 py-4 rounded-xl font-bold interactive-btn uppercase text-sm tracking-widest">Solicitar meu Site</button>
-                    <a href="#simulador" class="border border-white/20 px-8 py-4 rounded-xl font-bold text-center interactive-btn text-sm uppercase tracking-widest">Testar Simulador</a>
+                    <button onclick="window.location.href='#simulador'" class="tesla-btn px-10 py-5 rounded-2xl text-[11px]">Iniciar Análise</button>
+                    <button onclick="window.location.href='#sobre'" class="glass px-10 py-5 rounded-2xl text-[11px] font-black uppercase hover:bg-white/10 transition-all">Ver Soluções</button>
                 </div>
             </div>
             
-            <div class="relative reveal flex justify-center">
-                <div class="img-container w-72 h-96 md:w-[420px] md:h-[580px]">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
-                    <img src="img/perfil.jpg" alt="Atos Miranda" class="w-full h-full object-cover">
+            <!-- Espaço Único para Foto -->
+            <div class="flex justify-center tilt-element perspective-1000">
+                <div class="relative w-full max-w-md aspect-[3/4] rounded-[60px] glass border border-white/10 flex items-center justify-center overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-t from-blue-600/40 to-transparent z-0 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="flex flex-col items-center z-10 opacity-30 group-hover:opacity-50 transition-all">
+                        <i data-lucide="camera" class="w-16 h-16 mb-4"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest">Sua Foto de Autoridade</p>
+                    </div>
+                    <div class="absolute bottom-12 left-12 z-20">
+                        <p class="text-4xl font-black italic text-white leading-none">ATOS</p>
+                        <p class="text-blue-500 font-bold uppercase tracking-widest text-xs mt-1">Miranda</p>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="absolute -bottom-6 -right-6 glass p-6 rounded-2xl hidden md:block border-[#3b82f6]/30 z-20">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-[#3b82f6] p-2 rounded-lg"><i data-lucide="check-circle" class="text-white w-6 h-6"></i></div>
+    <!-- Serviços -->
+    <section id="sobre" class="py-32 bg-black/30">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="reveal glass p-10 rounded-[40px] tilt-element">
+                <i data-lucide="target" class="text-blue-500 w-10 h-10 mb-6"></i>
+                <h3 class="text-xl font-black uppercase mb-4">Posicionamento</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Não é sobre ser visto, é sobre ser percebido como o melhor do mercado.</p>
+            </div>
+            <div class="reveal glass p-10 rounded-[40px] tilt-element" style="transition-delay: 0.2s">
+                <i data-lucide="cpu" class="text-blue-500 w-10 h-10 mb-6"></i>
+                <h3 class="text-xl font-black uppercase mb-4">Ecossistemas 3D</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Interfaces imersivas que retêm a atenção e transmitem poder tecnológico.</p>
+            </div>
+            <div class="reveal glass p-10 rounded-[40px] tilt-element" style="transition-delay: 0.4s">
+                <i data-lucide="zap" class="text-blue-500 w-10 h-10 mb-6"></i>
+                <h3 class="text-xl font-black uppercase mb-4">Alta Conversão</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Foco absoluto em resultados. Cada pixel é desenhado para converter autoridade em lucro.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Painel de Criação Avançado -->
+    <section id="simulador" class="py-32 bg-black">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
+                
+                <!-- Inputs Estilo Tesla -->
+                <div class="reveal glass p-10 rounded-[50px] border-blue-500/20 sticky top-32">
+                    <h2 class="text-3xl font-black uppercase italic mb-10 tracking-tighter">CONFIGURADOR DE <span class="text-blue-500">ELITE</span></h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="md:col-span-2">
+                            <label class="text-[9px] uppercase font-black text-blue-400 mb-2 block tracking-widest">Nome do Líder</label>
+                            <input type="text" id="u-name" placeholder="Seu Nome" class="w-full bg-white/5 border-b-2 border-white/10 py-4 outline-none focus:border-blue-500 font-bold text-white transition-all">
+                        </div>
                         <div>
-                            <p class="text-xs font-bold text-white uppercase tracking-tighter">Integridade</p>
-                            <p class="text-[10px] text-gray-400">Valores Cristãos</p>
+                            <label class="text-[9px] uppercase font-black text-blue-400 mb-2 block tracking-widest">Sua Empresa</label>
+                            <input type="text" id="u-emp" placeholder="Nome da Marca" class="w-full bg-white/5 border-b-2 border-white/10 py-4 outline-none focus:border-blue-500 font-bold text-white transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-black text-blue-400 mb-2 block tracking-widest">Seu Cargo</label>
+                            <input type="text" id="u-role" placeholder="Ex: Diretor Executivo" class="w-full bg-white/5 border-b-2 border-white/10 py-4 outline-none focus:border-blue-500 font-bold text-white transition-all">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="text-[9px] uppercase font-black text-blue-400 mb-2 block tracking-widest">Cor de Identidade (Sua Favorita)</label>
+                            <input type="color" id="u-color" value="#3b82f6" oninput="updateColorPreview(this.value)">
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Sobre Atos -->
-    <section id="sobre-atos" class="py-24 bg-[#020617] relative">
-        <div class="container mx-auto px-6">
-            <div class="max-w-4xl mx-auto text-center reveal">
-                <h2 class="text-4xl font-black mb-8 italic">Honra e <span class="text-[#3b82f6]">Excelência</span></h2>
-                <p class="text-xl text-gray-300 leading-relaxed mb-6">
-                    Trabalho sob princípios que valorizam a verdade e o compromisso. Minha meta é ver seu negócio prosperar através de uma presença digital impecável.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Simulador Dinâmico Atualizado -->
-    <section id="simulador" class="py-24 bg-blue-950/20">
-        <div class="container mx-auto px-6">
-            <div class="max-w-5xl mx-auto">
-                <div class="text-center mb-12 reveal">
-                    <h2 class="text-4xl font-black uppercase italic mb-4">Simulador <span class="text-[#3b82f6]">Imersivo</span></h2>
-                    <p class="text-gray-400">Veja como sua marca se comporta em um ambiente de alto padrão.</p>
+                    <button onclick="gerarAnaliseReal()" class="mt-12 w-full tesla-btn py-7 rounded-3xl text-xs tracking-[0.3em]">GERAR PROTÓTIPO DE IMPACTO</button>
                 </div>
 
-                <div class="glass p-8 rounded-3xl border border-[#3b82f6]/20 mb-12 reveal">
-                    <div class="grid md:grid-cols-3 gap-6 mb-8">
-                        <input type="text" id="user-name" placeholder="Seu Nome Completo" class="bg-black/40 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#3b82f6] transition-all">
-                        <input type="text" id="empresa-nome" placeholder="Nome da sua Empresa" class="bg-black/40 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#3b82f6] transition-all">
-                        <input type="text" id="user-funcao" placeholder="Sua Função (ex: CEO)" class="bg-black/40 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#3b82f6] transition-all">
-                    </div>
-                    <button onclick="gerarSiteInterativo()" class="w-full bg-[#3b82f6] text-white py-5 rounded-2xl font-black text-xl interactive-btn uppercase tracking-widest">PERSONALIZAR MINHA EXPERIÊNCIA ✨</button>
-                </div>
-
-                <!-- O CARDZINHO DO SITE (SIMULADOR) -->
-                <div id="sim-result" class="hidden reveal">
-                    <div class="browser-mockup">
-                        <!-- Barra Superior -->
-                        <div class="bg-[#0f172a] p-4 flex gap-2 border-b border-white/5">
-                            <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+                <!-- O SITE GERADO (MOCKUP REALISTA) -->
+                <div id="site-preview" class="hidden reveal perspective-2000">
+                    <div class="browser-mockup tilt-element">
+                        <!-- Toolbar do Navegador -->
+                        <div class="bg-slate-100 p-4 flex items-center gap-6 border-b border-slate-200">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="flex-1 bg-white rounded-xl py-2 px-5 text-[10px] text-slate-400 flex items-center gap-3 border border-slate-200 shadow-inner">
+                                <i data-lucide="lock" class="w-3 h-3"></i> https://www.<span id="url-emp">empresa</span>.com.br
+                            </div>
                         </div>
-                        
-                        <div class="browser-screen" id="sim-scroll-area">
-                            <!-- Menu do Protótipo -->
-                            <div class="proto-nav">
-                                <span class="font-black text-lg tracking-tighter text-[#1e293b]" id="proto-logo">LOGO</span>
-                                <div class="flex gap-4 text-[11px] font-black uppercase tracking-wider text-gray-400">
-                                    <span onclick="setTab('home')" class="cursor-pointer hover:text-[#3b82f6]">Início</span>
-                                    <span onclick="setTab('produtos')" class="cursor-pointer hover:text-[#3b82f6]">Produtos</span>
-                                    <span onclick="irParaWhatsApp()" class="text-[#3b82f6] cursor-pointer">Contato</span>
-                                </div>
-                            </div>
 
-                            <!-- Aba Home -->
-                            <div id="tab-home" class="tab-content active p-10 text-center">
-                                <div class="mb-4 inline-block px-4 py-1 bg-blue-50 text-[#3b82f6] rounded-full text-xs font-bold uppercase tracking-widest" id="proto-badge">Bem-vindo(a)</div>
-                                <h3 class="text-4xl font-black mb-6 text-[#0f172a] leading-tight" id="proto-h1">Seu Sucesso Digital</h3>
-                                <p class="text-lg text-gray-600 mb-10 leading-relaxed font-medium" id="proto-desc">Estamos preparando uma estratégia única para elevar o nível da sua marca.</p>
-                                
-                                <button onclick="irParaWhatsApp()" class="w-full bg-[#3b82f6] text-white py-5 rounded-xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20">Quero saber mais agora</button>
-                                
-                                <div class="mt-12 pt-8 border-t border-gray-100 flex items-center justify-center gap-4">
-                                    <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                                        <i data-lucide="user" class="w-6 h-6 text-slate-400"></i>
-                                    </div>
-                                    <div class="text-left">
-                                        <p class="text-sm font-black text-slate-800" id="proto-user-name">Seu Nome</p>
-                                        <p class="text-xs text-slate-500 font-bold uppercase tracking-wider" id="proto-user-funcao">Sua Função</p>
+                        <!-- Interface do Cliente -->
+                        <div class="h-[650px] overflow-y-auto bg-white scroll-smooth" id="site-content">
+                            <!-- Nav Interna -->
+                            <nav class="flex justify-between items-center px-8 py-6 sticky top-0 bg-white/95 backdrop-blur-md z-50 shadow-sm">
+                                <span class="font-black text-2xl italic tracking-tighter user-theme-text" id="res-logo">LOGO</span>
+                                <div class="hidden md:flex gap-10 text-[10px] font-black uppercase text-slate-400">
+                                    <span class="user-theme-text">Home</span>
+                                    <span class="hover:text-slate-900 transition-colors">Portfólio</span>
+                                    <span class="hover:text-slate-900 transition-colors">Soluções</span>
+                                </div>
+                                <button class="user-theme-bg text-white px-5 py-2 rounded-lg text-[8px] font-black uppercase shadow-lg">Contato</button>
+                            </nav>
+
+                            <div class="p-8 md:p-12">
+                                <!-- Hero Interno -->
+                                <div class="mb-16">
+                                    <h3 class="text-4xl md:text-6xl font-black mb-6 tracking-tighter leading-[0.9] text-slate-900" id="res-h1">SOLUÇÃO DE ELITE</h3>
+                                    <p class="text-slate-500 mb-10 font-medium max-w-md">Estrutura digital personalizada para maximizar a autoridade da sua marca no mercado global.</p>
+                                    
+                                    <!-- Botão Home Gigante que você pediu -->
+                                    <button class="user-theme-bg text-white w-full md:w-auto px-12 py-6 rounded-[25px] font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-transform mb-12">
+                                        Explorar Ecossistema
+                                    </button>
+                                </div>
+
+                                <!-- Barra de Pesquisa Integrada -->
+                                <div class="mb-16 bg-slate-50 p-6 rounded-[35px] border-2 border-slate-100">
+                                    <label class="text-[9px] font-black uppercase text-slate-400 mb-3 block ml-2">O que você deseja buscar hoje?</label>
+                                    <div class="relative">
+                                        <input type="text" placeholder="Pesquise por serviços ou produtos..." class="w-full bg-white border border-slate-200 p-5 rounded-2xl outline-none focus:ring-2 ring-offset-2 ring-blue-500 transition-all text-sm font-bold">
+                                        <div class="absolute right-3 top-1/2 -translate-y-1/2 user-theme-bg p-3 rounded-xl text-white">
+                                            <i data-lucide="search" class="w-5 h-5"></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Aba Produtos (Vitrine Interativa) -->
-                            <div id="tab-produtos" class="tab-content p-10">
-                                <h3 class="text-2xl font-black mb-2 text-[#0f172a]">Nossa Vitrine</h3>
-                                <p class="text-sm text-gray-500 mb-6 font-bold uppercase tracking-wider">Arraste para o lado e veja como ficaria</p>
+                                <!-- Grade de Produtos Customizada -->
+                                <h4 class="font-black text-2xl mb-8 flex items-center gap-4 text-slate-900">
+                                    <span class="w-12 h-1.5 user-theme-bg block rounded-full"></span> 
+                                    Catálogo VIP
+                                </h4>
                                 
                                 <div class="product-carousel">
-                                    <div class="product-card">
-                                        <div class="aspect-square bg-white rounded-lg flex items-center justify-center mb-4 border border-gray-100">
-                                            <i data-lucide="package" class="w-10 h-10 text-blue-200"></i>
+                                    <div class="product-card-sim">
+                                        <div class="w-full aspect-square bg-slate-100 rounded-[25px] mb-5 flex items-center justify-center border-2 border-transparent hover:border-blue-500 transition-all cursor-pointer">
+                                            <i data-lucide="shield-check" class="w-12 h-12 text-slate-300"></i>
                                         </div>
-                                        <p class="text-xs font-black uppercase text-gray-400">Espaço para</p>
-                                        <p class="text-sm font-black text-blue-600 uppercase">Seu Produto #1</p>
+                                        <p class="font-black text-lg text-slate-900 leading-tight">Solução Alpha</p>
+                                        <p class="user-theme-text font-bold text-sm mt-1">Alta Escala</p>
                                     </div>
-                                    <div class="product-card">
-                                        <div class="aspect-square bg-white rounded-lg flex items-center justify-center mb-4 border border-gray-100">
-                                            <i data-lucide="package" class="w-10 h-10 text-blue-200"></i>
+                                    <div class="product-card-sim">
+                                        <div class="w-full aspect-square bg-slate-100 rounded-[25px] mb-5 flex items-center justify-center border-2 border-transparent hover:border-blue-500 transition-all cursor-pointer">
+                                            <i data-lucide="zap" class="w-12 h-12 text-slate-300"></i>
                                         </div>
-                                        <p class="text-xs font-black uppercase text-gray-400">Espaço para</p>
-                                        <p class="text-sm font-black text-blue-600 uppercase">Seu Produto #2</p>
+                                        <p class="font-black text-lg text-slate-900 leading-tight">Performance Max</p>
+                                        <p class="user-theme-text font-bold text-sm mt-1">Imediato</p>
                                     </div>
-                                    <div class="product-card">
-                                        <div class="aspect-square bg-white rounded-lg flex items-center justify-center mb-4 border border-gray-100">
-                                            <i data-lucide="package" class="w-10 h-10 text-blue-200"></i>
+                                    <div class="product-card-sim">
+                                        <div class="w-full aspect-square bg-slate-100 rounded-[25px] mb-5 flex items-center justify-center border-2 border-transparent hover:border-blue-500 transition-all cursor-pointer">
+                                            <i data-lucide="globe" class="w-12 h-12 text-slate-300"></i>
                                         </div>
-                                        <p class="text-xs font-black uppercase text-gray-400">Espaço para</p>
-                                        <p class="text-sm font-black text-blue-600 uppercase">Seu Produto #3</p>
+                                        <p class="font-black text-lg text-slate-900 leading-tight">Global Reach</p>
+                                        <p class="user-theme-text font-bold text-sm mt-1">Expansão</p>
                                     </div>
                                 </div>
 
-                                <button onclick="irParaWhatsApp()" class="mt-8 w-full border-2 border-[#3b82f6] text-[#3b82f6] py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors">Solicitar Orçamento da Vitrine</button>
+                                <!-- Card do Líder -->
+                                <div class="mt-20 p-10 bg-slate-900 rounded-[45px] text-white flex flex-col md:flex-row items-center gap-10 shadow-3xl">
+                                    <div class="w-28 h-28 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center relative overflow-hidden group">
+                                        <div class="absolute inset-0 user-theme-bg opacity-10 group-hover:opacity-30 transition-all"></div>
+                                        <i data-lucide="user" class="w-14 h-14 text-white opacity-40"></i>
+                                    </div>
+                                    <div class="text-center md:text-left flex-1">
+                                        <p class="text-[10px] font-black uppercase text-blue-400 tracking-[0.3em] mb-2">Responsável Técnico</p>
+                                        <p class="text-3xl font-black italic mb-1" id="res-user">Nome do Usuário</p>
+                                        <p class="text-sm opacity-60 font-medium" id="res-role-emp">Cargo na Empresa</p>
+                                    </div>
+                                    <button class="user-theme-bg p-5 rounded-2xl text-white">
+                                        <i data-lucide="external-link" class="w-6 h-6"></i>
+                                    </button>
+                                </div>
                             </div>
-
-                            <div class="proto-whatsapp" onclick="irParaWhatsApp()">
-                                <i data-lucide="message-circle" class="w-8 h-8"></i>
-                            </div>
+                            
+                            <footer class="p-14 text-center text-[10px] font-black text-slate-300 border-t border-slate-100 uppercase tracking-widest">
+                                © 2024 <span id="res-footer-emp">SUA MARCA</span> • DISTRIBUIÇÃO EXCLUSIVA
+                            </footer>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Meus Serviços -->
-    <section id="meus-servicos" class="py-24 bg-black">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-black uppercase mb-16 italic reveal">Como <span class="text-[#3b82f6]">ajudo seu negócio</span></h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass p-10 rounded-[40px] reveal group">
-                    <i data-lucide="monitor" class="w-12 h-12 text-[#3b82f6] mb-6 group-hover:scale-110 transition"></i>
-                    <h3 class="text-2xl font-bold mb-4 text-white">Sites Premium</h3>
-                    <p class="text-gray-400 leading-relaxed">Desenvolvimento focado em velocidade e conversão.</p>
-                </div>
-                <div class="glass p-10 rounded-[40px] reveal group">
-                    <i data-lucide="trending-up" class="w-12 h-12 text-[#3b82f6] mb-6 group-hover:scale-110 transition"></i>
-                    <h3 class="text-2xl font-bold mb-4 text-white">Posicionamento</h3>
-                    <p class="text-gray-400 leading-relaxed">Seja visto como a maior autoridade do seu ramo.</p>
-                </div>
-                <div class="glass p-10 rounded-[40px] reveal group">
-                    <i data-lucide="zap" class="w-12 h-12 text-[#3b82f6] mb-6 group-hover:scale-110 transition"></i>
-                    <h3 class="text-2xl font-bold mb-4 text-white">Estratégia</h3>
-                    <p class="text-gray-400 leading-relaxed">Caminhos inteligentes para converter visitantes em clientes.</p>
-                </div>
+    <!-- Footer Geral -->
+    <footer class="py-24 text-center border-t border-white/5 bg-black/50">
+        <div class="container mx-auto px-6">
+            <p class="text-3xl font-black italic uppercase mb-4 tracking-tighter">ATOS <span class="text-blue-500">MIRANDA</span></p>
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-[1.8em] mb-10">AUTORIDADE • IMPACTO • ELITE</p>
+            <div class="flex justify-center gap-6 mb-12">
+                <i data-lucide="instagram" class="w-5 h-5 text-gray-700 hover:text-blue-500 cursor-pointer"></i>
+                <i data-lucide="linkedin" class="w-5 h-5 text-gray-700 hover:text-blue-500 cursor-pointer"></i>
+                <i data-lucide="twitter" class="w-5 h-5 text-gray-700 hover:text-blue-500 cursor-pointer"></i>
             </div>
+            <p class="text-[9px] text-gray-700 font-bold uppercase tracking-widest">© 2024 - Desenvolvido com Excelência para a Glória de Deus</p>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="py-16 border-t border-white/5 text-center bg-black">
-        <span class="text-xl font-black tracking-tighter uppercase mb-6 block text-white">ATOS <span class="text-[#3b82f6]">MIRANDA</span></span>
-        <p class="text-gray-700 text-[10px] uppercase tracking-[0.5em]">© 2026 • Honra e Glória a Jesus</p>
     </footer>
 
     <script>
         lucide.createIcons();
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
+        function updateColorPreview(color) {
+            document.documentElement.style.setProperty('--user-color', color);
+            // Atualiza bordas dos cards de produto dinamicamente
+            document.querySelectorAll('.product-card-sim').forEach(el => {
+                el.style.borderColor = '#e2e8f0';
             });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-        function setTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            // Scroll para o topo interno do mockup
-            document.getElementById('sim-scroll-area').scrollTop = 0;
         }
 
-        function irParaWhatsApp() {
-            const nome = document.getElementById('user-name').value.trim() || 'Amigo';
-            const empresa = document.getElementById('empresa-nome').value.trim() || 'meu negócio';
-            const funcao = document.getElementById('user-funcao').value.trim() || 'Líder';
+        async function gerarAnaliseReal() {
+            const nome = document.getElementById('u-name').value || "Líder de Elite";
+            const empresa = document.getElementById('u-emp').value || "Empresa de Sucesso";
+            const cargo = document.getElementById('u-role').value || "Gestor(a)";
             
-            const msg = encodeURIComponent(`Olá Atos! 👋\n\nMeu nome é *${nome}*, sou *${funcao}* da empresa *${empresa}*.\nVi o simulador interativo e decidi que é hora de posicionar meu negócio com excelência!`);
-            window.open(`https://wa.me/5533984684394?text=${msg}`, '_blank');
-        }
-
-        async function gerarSiteInterativo() {
-            const nome = document.getElementById('user-name').value;
-            const empresa = document.getElementById('empresa-nome').value;
-            const funcao = document.getElementById('user-funcao').value;
-
-            if(!nome || !empresa) {
-                // Feedback visual simples
-                alert("Por favor, preencha pelo menos seu nome e o nome da sua empresa!");
-                return;
-            };
-
-            const result = document.getElementById('sim-result');
-            result.classList.remove('hidden');
+            document.getElementById('res-logo').innerText = empresa.toUpperCase();
+            document.getElementById('url-emp').innerText = empresa.toLowerCase().replace(/\s/g, '');
+            document.getElementById('res-user').innerText = nome;
+            document.getElementById('res-role-emp').innerText = `${cargo} na ${empresa}`;
+            document.getElementById('res-footer-emp').innerText = empresa.toUpperCase();
             
-            // Atualiza dados estáticos no mockup
-            document.getElementById('proto-logo').innerText = empresa.toUpperCase();
-            document.getElementById('proto-user-name').innerText = nome;
-            document.getElementById('proto-user-funcao').innerText = funcao || 'Referência no Ramo';
-            document.getElementById('proto-badge').innerText = `${empresa} • Presença Premium`;
+            const preview = document.getElementById('site-preview');
+            preview.classList.remove('hidden');
+            preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Textos padrão de carregamento (maiores para melhor leitura)
-            document.getElementById('proto-h1').innerText = `O Futuro da ${empresa}`;
-            document.getElementById('proto-desc').innerText = `Eleve o padrão da sua marca com a estratégia de Atos Miranda.`;
-            
-            setTab('home');
-            result.scrollIntoView({ behavior: 'smooth' });
+            lucide.createIcons();
 
-            const apiKey = "";
+            // Chamada API para Texto Impactante
+            const apiKey = ""; 
             try {
+                const prompt = `Crie uma frase de 4 palavras curta, forte e autoritária para o título de um site da empresa ${empresa}. Retorne em JSON { "h1": "..." }`;
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Crie um título curto de impacto e uma descrição de 2 linhas focada em autoridade e autoridade digital para a empresa ${empresa}. O tom deve ser luxuoso e profissional. Retorne JSON com h1 e desc.` }] }],
+                        contents: [{ parts: [{ text: prompt }] }],
                         generationConfig: { responseMimeType: "application/json" }
                     })
                 });
-                
                 const data = await response.json();
                 const res = JSON.parse(data.candidates[0].content.parts[0].text);
-                document.getElementById('proto-h1').innerText = res.h1;
-                document.getElementById('proto-desc').innerText = res.desc;
-                
-                // Reinicia os ícones gerados dinamicamente
-                lucide.createIcons();
+                document.getElementById('res-h1').innerText = res.h1.toUpperCase();
             } catch (e) {
-                console.log("IA Offline - Mantendo layout padrão.");
+                document.getElementById('res-h1').innerText = `LIDERANÇA GLOBAL ${empresa.toUpperCase()}`;
             }
         }
+
+        // --- SISTEMA DE PARTÍCULAS TESLA (RESTAURADO) ---
+        const init3D = () => {
+            const container = document.getElementById('three-canvas-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const particleCount = window.innerWidth < 768 ? 2000 : 5000;
+            for (let i = 0; i < particleCount; i++) {
+                vertices.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
+            }
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            const material = new THREE.PointsMaterial({ color: 0x3b82f6, size: 2, transparent: true, opacity: 0.5 });
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 1000;
+
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) * 0.05;
+                mouseY = (e.clientY - window.innerHeight / 2) * 0.05;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.0008;
+                camera.position.x += (mouseX - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        // --- TILT 3D ---
+        const initTilt = () => {
+            document.querySelectorAll('.tilt-element').forEach(el => {
+                el.addEventListener('mousemove', (e) => {
+                    const rect = el.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width - 0.5;
+                    const y = (e.clientY - rect.top) / rect.height - 0.5;
+                    el.style.transform = `perspective(1000px) rotateY(${x * 15}deg) rotateX(${y * -15}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+                el.addEventListener('mouseleave', () => el.style.transform = 'none');
+            });
+        };
+
+        window.onload = () => {
+            init3D();
+            initTilt();
+            const obs = new IntersectionObserver(entries => {
+                entries.forEach(en => { if(en.isIntersecting) en.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+        };
     </script>
 </body>
 </html>
