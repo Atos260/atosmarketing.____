@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atos Miranda | Especialista em Posicionamento Digital</title>
+    <meta name="description" content="Especialista em posicionamento digital para pequenos negócios. Criação de sites estratégicos e estruturação de Instagram.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #7B2FF7, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .interactive-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .interactive-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 20px rgba(123, 47, 247, 0.3);
+        }
+        
+        .reveal {
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1; transform: translateY(0);
+        }
+
+        /* Protótipo do Site Interativo */
+        .browser-mockup {
+            background: #111;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(123, 47, 247, 0.4);
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+        }
+        .browser-screen {
+            background: #fdfdfd;
+            height: 550px;
+            overflow-y: auto;
+            color: #1a1a1a;
+            position: relative;
+        }
+
+        .proto-nav {
+            background: #fff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .proto-whatsapp {
+            position: absolute;
+            bottom: 25px; right: 25px;
+            background: #25D366; color: white;
+            padding: 14px; border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            animation: pulse-green 2s infinite;
+            z-index: 30; cursor: pointer;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .img-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 40px;
+            border: 1px solid rgba(123, 47, 247, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(123, 47, 247, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegação Principal -->
+    <nav class="fixed top-0 w-full z-50 glass py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <span class="text-xl font-black tracking-tighter">ATOS <span class="text-[#7B2FF7]">MIRANDA</span></span>
+            <div class="hidden md:flex space-x-8 font-medium text-sm uppercase tracking-widest items-center">
+                <a href="#sobre-atos" class="hover:text-[#7B2FF7] transition-colors">Sobre</a>
+                <a href="#simulador" class="hover:text-[#7B2FF7] transition-colors">Simulador</a>
+                <a href="#meus-servicos" class="hover:text-[#7B2FF7] transition-colors">Serviços</a>
+                <a href="javascript:void(0)" onclick="irParaWhatsApp()" class="bg-[#7B2FF7] px-5 py-2 rounded-full interactive-btn text-xs font-bold text-white">Contato</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section com a Foto Local (ALTERADO AQUI) -->
+    <section class="relative min-h-screen flex items-center pt-28 overflow-hidden">
+        <div class="absolute top-1/4 -left-20 w-96 h-96 bg-[#7B2FF7] opacity-10 blur-[120px]"></div>
+        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="reveal">
+                <h2 class="text-[#7B2FF7] font-bold tracking-[0.3em] mb-4 uppercase text-sm">Posicionamento Digital</h2>
+                <h1 class="text-5xl md:text-7xl font-black leading-tight mb-6">
+                    Sua marca <br><span class="text-gradient">Elevada ao Topo.</span>
+                </h1>
+                <p class="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
+                    Transformamos negócios comuns em autoridades digitais através de sites estratégicos e design de alto padrão.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="irParaWhatsApp()" class="bg-[#7B2FF7] text-white px-8 py-4 rounded-xl font-bold interactive-btn uppercase text-sm tracking-widest">Garantir meu lugar</button>
+                    <a href="#simulador" class="border border-white/20 px-8 py-4 rounded-xl font-bold text-center interactive-btn text-sm uppercase tracking-widest">Ver Simulador</a>
+                </div>
+            </div>
+            
+            <!-- FOTO LOCAL -->
+            <div class="relative reveal flex justify-center">
+                <div class="img-container w-72 h-96 md:w-[420px] md:h-[580px]">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+
+                    <!-- ✅ AQUI ESTÁ A TROCA -->
+                    <img src="img/perfil.jpg" 
+                         alt="Atos Miranda" class="w-full h-full object-cover">
+                </div>
+
+                <div class="absolute -bottom-6 -right-6 glass p-6 rounded-2xl hidden md:block border-[#7B2FF7]/30 z-20">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-[#7B2FF7] p-2 rounded-lg"><i data-lucide="check-circle" class="text-white w-6 h-6"></i></div>
+                        <div>
+                            <p class="text-xs font-bold text-white uppercase tracking-tighter">Posicionamento</p>
+                            <p class="text-[10px] text-gray-400">Estratégia Validada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Atos -->
+    <section id="sobre-atos" class="py-24 bg-black relative">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center reveal">
+                <h2 class="text-4xl font-black mb-8 italic">Compromisso com <span class="text-[#7B2FF7]">a Excelência</span></h2>
+                <p class="text-xl text-gray-300 leading-relaxed mb-6">
+                    Sou Cristão, servo de Deus, e carrego comigo o valor da integridade e do trabalho bem feito. Minha missão é ajudar você a prosperar.
+                </p>
+                <p class="text-lg text-gray-500 leading-relaxed">
+                    Não entrego apenas design. Entrego uma estratégia que posiciona sua marca como a escolha número #1 no coração dos seus clientes.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulador Dinâmico -->
+    <section id="simulador" class="py-24 bg-zinc-900/30">
+        <div class="container mx-auto px-6">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-black uppercase italic mb-4">Simulador <span class="text-[#7B2FF7]">Interativo</span></h2>
+                    <p class="text-gray-400">Navegue no seu futuro site dentro desta experiência única.</p>
+                </div>
+
+                <div class="glass p-8 rounded-3xl border border-[#7B2FF7]/20 mb-12 reveal">
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <input type="text" id="user-name" placeholder="Seu Nome" class="bg-black/40 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#7B2FF7] transition-all">
+                        <input type="text" id="empresa-nome" placeholder="Nome da Empresa" class="bg-black/40 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#7B2FF7] transition-all">
+                        <input type="text" id="empresa-ramo" placeholder="Seu Ramo" class="bg-black/40 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#7B2FF7] transition-all">
+                    </div>
+                    <button onclick="gerarSiteInterativo()" class="w-full bg-[#7B2FF7] text-white py-5 rounded-2xl font-black text-xl interactive-btn uppercase tracking-widest">ABRIR MEU SITE INTERATIVO ✨</button>
+                </div>
+
+                <!-- MINI CARD INTERATIVO -->
+                <div id="sim-result" class="hidden reveal">
+                    <div class="browser-mockup">
+                        <div class="bg-[#1a1a1a] p-4 flex gap-2 border-b border-white/5">
+                            <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+                        </div>
+                        
+                        <div class="browser-screen">
+                            <div class="proto-nav">
+                                <span class="font-black text-sm tracking-tighter text-[#1a1a1a]" id="proto-logo">LOGO</span>
+                                <div class="flex gap-6 text-[12px] font-black uppercase tracking-wider text-gray-500">
+                                    <span onclick="setTab('home')" class="cursor-pointer hover:text-[#7B2FF7]">Home</span>
+                                    <span onclick="setTab('sobre')" class="cursor-pointer hover:text-[#7B2FF7]">Sobre</span>
+                                    <span onclick="setTab('servicos')" class="cursor-pointer hover:text-[#7B2FF7]">Serviços</span>
+                                    <span onclick="irParaWhatsApp()" class="text-[#7B2FF7] cursor-pointer">Contato</span>
+                                </div>
+                            </div>
+
+                            <div id="tab-home" class="tab-content active p-10 text-center">
+                                <h3 class="text-3xl font-black mb-6 text-[#1a1a1a] leading-tight" id="proto-h1">Título Magnético</h3>
+                                <p class="text-base text-gray-700 mb-8 leading-relaxed max-w-sm mx-auto font-medium" id="proto-desc">Carregando estratégia personalizada para seu negócio...</p>
+                                <div class="h-14 bg-[#7B2FF7] rounded-xl flex items-center justify-center text-white font-black text-sm uppercase tracking-widest max-w-xs mx-auto">Saber mais agora</div>
+                            </div>
+
+                            <div id="tab-sobre" class="tab-content p-10">
+                                <h3 class="text-2xl font-black mb-6 text-[#1a1a1a]">Estratégia Atos Miranda</h3>
+                                <p class="text-base text-gray-800 leading-relaxed font-semibold">Este projeto é focado em transformar sua vitrine digital em uma máquina de lucro. Design limpo, rápido e focado no cliente.</p>
+                                <div class="mt-8 p-6 bg-purple-50 rounded-2xl border-l-8 border-[#7B2FF7]">
+                                    <p class="text-xs text-[#7B2FF7] font-black uppercase mb-1">Diferencial:</p>
+                                    <p class="text-base text-purple-900 font-bold italic">Posicionamento de Autoridade.</p>
+                                </div>
+                            </div>
+
+                            <div id="tab-servicos" class="tab-content p-10">
+                                <h3 class="text-2xl font-black mb-8 text-[#1a1a1a]">Serviços Inclusos</h3>
+                                <div class="space-y-6">
+                                    <div class="flex items-center gap-5">
+                                        <div class="bg-[#7B2FF7]/10 p-3 rounded-xl"><i data-lucide="layout" class="w-6 h-6 text-[#7B2FF7]"></i></div>
+                                        <div><h4 class="text-sm font-black uppercase text-[#1a1a1a]">Criação de Sites</h4><p class="text-xs text-gray-500 font-bold">Design Premium e Adaptável.</p></div>
+                                    </div>
+                                    <div class="flex items-center gap-5">
+                                        <div class="bg-[#7B2FF7]/10 p-3 rounded-xl"><i data-lucide="trending-up" class="w-6 h-6 text-[#7B2FF7]"></i></div>
+                                        <div><h4 class="text-sm font-black uppercase text-[#1a1a1a]">Posicionamento</h4><p class="text-xs text-gray-500 font-bold">Autoridade Instantânea.</p></div>
+                                    </div>
+                                    <div class="flex items-center gap-5">
+                                        <div class="bg-[#7B2FF7]/10 p-3 rounded-xl"><i data-lucide="zap" class="w-6 h-6 text-[#7B2FF7]"></i></div>
+                                        <div><h4 class="text-sm font-black uppercase text-[#1a1a1a]">Conversão</h4><p class="text-xs text-gray-500 font-bold">Foco em Vendas Reais.</p></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="proto-whatsapp" onclick="irParaWhatsApp()">
+                                <i data-lucide="message-circle" class="w-7 h-7"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meus Serviços -->
+    <section id="meus-servicos" class="py-24 bg-black">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-black uppercase mb-16 italic reveal">Como <span class="text-[#7B2FF7]">ajudo seu negócio</span></h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass p-10 rounded-[40px] reveal group">
+                    <i data-lucide="monitor" class="w-12 h-12 text-[#7B2FF7] mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="text-2xl font-bold mb-4">Sites Premium</h3>
+                    <p class="text-gray-400 leading-relaxed">Desenvolvimento focado em velocidade e conversão de novos clientes.</p>
+                </div>
+                <div class="glass p-10 rounded-[40px] reveal group">
+                    <i data-lucide="instagram" class="w-12 h-12 text-[#7B2FF7] mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="text-2xl font-bold mb-4">Posicionamento</h3>
+                    <p class="text-gray-400 leading-relaxed">Estratégias de marca para você ser visto como a autoridade que realmente é.</p>
+                </div>
+                <div class="glass p-10 rounded-[40px] reveal group">
+                    <i data-lucide="rocket" class="w-12 h-12 text-[#7B2FF7] mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="text-2xl font-bold mb-4">Estratégia</h3>
+                    <p class="text-gray-400 leading-relaxed">Criação de caminhos inteligentes para o seu cliente chegar até você.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 border-t border-white/5 text-center bg-black">
+        <span class="text-xl font-black tracking-tighter uppercase mb-6 block">ATOS <span class="text-[#7B2FF7]">MIRANDA</span></span>
+        <p class="text-gray-700 text-[10px] uppercase tracking-[0.5em]">© 2026 • Honra e Glória a Jesus</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        function setTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        function irParaWhatsApp() {
+            const nome = document.getElementById('user-name').value.trim() || 'Amigo';
+            const empresa = document.getElementById('empresa-nome').value.trim() || 'meu negócio';
+            const ramo = document.getElementById('empresa-ramo').value.trim() || 'meu ramo';
+            
+            const msg = encodeURIComponent(`Olá Atos! 👋\n\nMeu nome é *${nome}*.\nVi o simulador para a empresa *${empresa}* e quero elevar meu posicionamento digital hoje!`);
+            window.open(`https://wa.me/5533984684394?text=${msg}`, '_blank');
+        }
+
+        async function gerarSiteInterativo() {
+            const nome = document.getElementById('user-name').value;
+            const empresa = document.getElementById('empresa-nome').value;
+            const ramo = document.getElementById('empresa-ramo').value;
+
+            if(!nome || !empresa) return alert("Por favor, preencha seu nome e da empresa!");
+
+            const result = document.getElementById('sim-result');
+            result.classList.remove('hidden');
+            
+            document.getElementById('proto-logo').innerText = empresa.toUpperCase();
+            document.getElementById('proto-h1').innerText = `O melhor em ${ramo} para ${empresa}`;
+            document.getElementById('proto-desc').innerText = `Eleve o padrão da sua marca com o design estratégico de Atos Miranda.`;
+            
+            setTab('home');
+            result.scrollIntoView({ behavior: 'smooth' });
+
+            const apiKey = "";
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Crie um título curto e uma descrição de 2 linhas focado em autoridade e lucro para um site de ${ramo} chamado ${empresa}. Retorne JSON com h1 e desc.` }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                });
+                const data = await response.json();
+                const res = JSON.parse(data.candidates[0].content.parts[0].text);
+                document.getElementById('proto-h1').innerText = res.h1;
+                document.getElementById('proto-desc').innerText = res.desc;
+            } catch (e) {}
+        }
+    </script>
+</body>
+</html>
