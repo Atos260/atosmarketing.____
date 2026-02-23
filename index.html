@@ -1,574 +1,2797 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atos Miranda | Posicionamento Elite 3D 2026</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fontes Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atos Miranda | Posicionamento Elite 3D 2026</title>
 
-    <style>
-        :root {
-            --tesla-blue: #3b82f6;
-            --tesla-dark: #020617;
-            --neon-glow: #60a5fa;
-            --user-color: #3b82f6; 
-        }
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet" />
+  <!-- Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Three.js (fundo global leve) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--tesla-dark);
-            color: #ffffff;
-            overflow-x: hidden;
-        }
+  <style>
+    :root{
+      /* Blues */
+      --blue-50:#eff6ff;
+      --blue-100:#dbeafe;
+      --blue-200:#bfdbfe;
+      --blue-300:#93c5fd;
+      --blue-400:#60a5fa;
+      --blue-500:#3b82f6;
+      --blue-600:#2563eb;
+      --blue-700:#1d4ed8;
+      --blue-800:#1e40af;
+      --blue-900:#1e3a8a;
+      --cyan-400:#22d3ee;
+      --sky-400:#38bdf8;
+      --indigo-400:#818cf8;
 
-        #three-canvas-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
+      --tesla-dark:#020617;
 
-        .neon-line-text {
-            position: relative;
-            display: inline-block;
-        }
+      --user-color:#3b82f6;
+      --user-color-soft:rgba(59,130,246,.14);
+      --user-color-soft-2:rgba(59,130,246,.08);
 
-        .neon-line-text::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 5px;
-            background: var(--tesla-blue);
-            box-shadow: 0 0 25px var(--neon-glow), 0 0 50px var(--tesla-blue);
-            animation: neon-flow 2.5s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-        }
+      --mock-bg:#ffffff;
+      --mock-panel:#ffffff;
+      --mock-text:#0f172a;
+      --mock-muted:#64748b;
+      --mock-border:#e2e8f0;
+    }
 
-        @keyframes neon-flow {
-            0% { width: 0; left: 0; }
-            100% { width: 100%; left: 0; }
-        }
+    *{ box-sizing:border-box; }
+    html, body{ margin:0; padding:0; }
+    body{
+      font-family:"Montserrat",sans-serif;
+      color:#fff;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(59,130,246,.16), transparent 36%),
+        radial-gradient(circle at 92% 16%, rgba(56,189,248,.12), transparent 36%),
+        radial-gradient(circle at 52% 85%, rgba(37,99,235,.10), transparent 40%),
+        radial-gradient(circle at 20% 65%, rgba(129,140,248,.06), transparent 35%),
+        linear-gradient(180deg, #020617 0%, #020817 40%, #020617 100%);
+      overflow-x:hidden;
+    }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+    @media (prefers-reduced-motion: reduce){
+      *{ animation:none !important; transition:none !important; }
+      #three-canvas-container, #global-particles, .bg-blob, #mouse-light { display:none !important; }
+    }
 
-        .tesla-btn {
-            background: linear-gradient(135deg, #1e40af, #3b82f6);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase;
-            font-weight: 900;
-        }
+    /* ===== Fundo global ===== */
+    #three-canvas-container{
+      position:fixed; inset:0;
+      z-index:-4;
+      pointer-events:none;
+      opacity:.95;
+      transition:opacity .2s ease;
+    }
 
-        .tesla-btn:hover {
-            box-shadow: 0 0 45px rgba(59, 130, 246, 0.7);
-            transform: translateY(-5px) scale(1.02);
-        }
+    #global-particles{
+      position:fixed; inset:0;
+      z-index:-3;
+      pointer-events:none;
+      overflow:hidden;
+      opacity:1;
+      transition:opacity .2s ease;
+    }
+    #global-particles span{
+      position:absolute;
+      border-radius:999px;
+      background:rgba(96,165,250,.6);
+      box-shadow:0 0 14px rgba(96,165,250,.35);
+      animation:riseParticle linear infinite;
+      opacity:0;
+      will-change:transform, opacity;
+    }
+    @keyframes riseParticle{
+      0%{ transform:translateY(20px) scale(.7); opacity:0; }
+      12%{ opacity:.45; }
+      85%{ opacity:.2; }
+      100%{ transform:translateY(-120px) scale(1.08); opacity:0; }
+    }
 
-        .whatsapp-tesla {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 9999;
-            background: #25d366;
-            width: 60px;
-            height: 60px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
-            animation: w-pulse 2s infinite;
-        }
+    .bg-blob{
+      position:fixed;
+      width:420px; height:420px;
+      border-radius:999px;
+      filter:blur(70px);
+      opacity:.14;
+      z-index:-2;
+      pointer-events:none;
+      animation:blobFloat 16s ease-in-out infinite;
+      will-change:transform, opacity;
+    }
+    .blob-1{ top:4%; left:-7%; background:#2563eb; animation-delay:0s; }
+    .blob-2{ top:35%; right:-8%; background:#0ea5e9; animation-delay:-5s; }
+    .blob-3{ bottom:-2%; left:25%; background:#1d4ed8; animation-delay:-9s; }
+    .blob-4{ top:65%; right:22%; background:#60a5fa; animation-delay:-12s; opacity:.08; }
 
-        @keyframes w-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+    @keyframes blobFloat{
+      0%,100%{ transform:translate(0,0) scale(1); }
+      50%{ transform:translate(10px,-18px) scale(1.05); }
+    }
 
-        .photo-3d-container { perspective: 1000px; }
-        .photo-3d-card { transition: transform 0.1s ease-out; transform-style: preserve-3d; }
+    .mouse-light{
+      position:fixed;
+      width:240px; height:240px;
+      border-radius:999px;
+      pointer-events:none;
+      z-index:-1;
+      background:
+        radial-gradient(circle, rgba(59,130,246,.14), rgba(34,211,238,.08), transparent 70%);
+      filter:blur(12px);
+      opacity:.42;
+      will-change:transform, opacity;
+      transform:translate3d(-9999px,-9999px,0);
+      transition:opacity .2s ease;
+    }
 
-        /* Mockup do Site Gerado */
-        .browser-mockup {
-            background: #ffffff;
-            border-radius: 30px;
-            overflow: hidden;
-            color: #0f172a;
-            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.7);
-            max-width: 100%;
-            height: 700px;
-            display: flex;
-            flex-direction: column;
-        }
+    /* ===== Performance focus no simulador ===== */
+    body.simulator-focus #mouse-light{ opacity:0 !important; }
+    body.simulator-focus #three-canvas-container{ opacity:.22 !important; }
+    body.simulator-focus #global-particles{ opacity:.12; }
+    body.simulator-focus #global-particles span{ animation-play-state:paused !important; }
+    body.simulator-focus .bg-blob{ opacity:.05 !important; animation:none !important; }
 
-        .user-theme-bg { background-color: var(--user-color) !important; }
-        .user-theme-text { color: var(--user-color) !important; }
+    /* ===== Base UI ===== */
+    .glass{
+      background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+      border:1px solid rgba(255,255,255,.11);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .glass-strong{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 18px 30px rgba(2,6,23,.26);
+    }
+    .blue-border-glow{
+      border:1px solid rgba(96,165,250,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 0 1px rgba(59,130,246,.08), 0 14px 24px rgba(2,6,23,.18);
+    }
 
-        .product-carousel {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding: 10px 0;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-        }
-        .product-carousel::-webkit-scrollbar { display: none; }
-        
-        .product-card-sim {
-            flex: 0 0 85%;
-            scroll-snap-align: center;
-            background: #f8fafc;
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-        }
+    .neon-line-text{ position:relative; display:inline-block; }
+    .neon-line-text::after{
+      content:"";
+      position:absolute;
+      left:0; bottom:-7px;
+      width:100%; height:4px; border-radius:999px;
+      background:linear-gradient(90deg, transparent, var(--blue-500), var(--cyan-400), var(--sky-400), transparent);
+      box-shadow:0 0 14px rgba(96,165,250,.55), 0 0 30px rgba(59,130,246,.30);
+      animation:neonPulse 2.2s ease-in-out infinite alternate;
+    }
+    @keyframes neonPulse{
+      from{ opacity:.65; transform:scaleX(.92); }
+      to{ opacity:1; transform:scaleX(1.02); }
+    }
 
-        @media (min-width: 768px) {
-            .product-card-sim { flex: 0 0 240px; }
-        }
+    .tesla-btn{
+      background:linear-gradient(135deg, #1e40af, #2563eb 35%, #3b82f6 70%, #38bdf8);
+      box-shadow:0 10px 28px rgba(59,130,246,.28), inset 0 1px 0 rgba(255,255,255,.18);
+      transition:all .28s ease;
+      text-transform:uppercase;
+      font-weight:900;
+      position:relative;
+      overflow:hidden;
+    }
+    .tesla-btn::before{
+      content:"";
+      position:absolute; inset:-120% -40%;
+      background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.18), transparent 65%);
+      transform:translateX(-100%) rotate(8deg);
+      transition:transform .7s ease;
+      pointer-events:none;
+    }
+    .tesla-btn:hover::before{ transform:translateX(100%) rotate(8deg); }
+    .tesla-btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 0 34px rgba(59,130,246,.45), 0 10px 24px rgba(59,130,246,.28);
+    }
 
-        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+    .w-btn{
+      position:fixed; right:22px; bottom:22px; z-index:9999;
+      width:62px; height:62px; border-radius:18px;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(180deg,#31e57e,#25d366);
+      border:1px solid rgba(255,255,255,.25);
+      box-shadow:0 10px 30px rgba(37,211,102,.38), inset 0 1px 0 rgba(255,255,255,.25);
+      animation:wPulse 2s ease-in-out infinite;
+    }
+    @keyframes wPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.08);} }
 
-        .card-tab {
-            padding: 12px 15px;
-            font-size: 9px;
-            font-weight: 900;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            color: #64748b;
-        }
-        .card-tab.active {
-            border-bottom-color: var(--user-color);
-            color: var(--user-color);
-        }
+    .reveal{
+      opacity:0; transform:translateY(18px);
+      transition:opacity .55s ease, transform .55s ease;
+    }
+    .reveal.active{ opacity:1; transform:translateY(0); }
 
-        /* Canvas 3D Interno do Card */
-        #card-3d-demo {
-            width: 100%;
-            height: 180px;
-            background: #0f172a;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-    </style>
+    /* ===== Foto 3D ===== */
+    .photo-3d-container{ perspective:1200px; }
+    .photo-3d-card{
+      transform-style:preserve-3d;
+      transition:transform .12s ease-out, box-shadow .2s ease;
+      will-change:transform;
+      box-shadow:0 24px 60px rgba(0,0,0,.35);
+      position:relative;
+    }
+    .photo-3d-card::after{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(96,165,250,.11), transparent 35%),
+        radial-gradient(circle at 82% 14%, rgba(255,255,255,.08), transparent 28%);
+    }
+
+    /* ===== extras principal ===== */
+    .blue-chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
+      font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.12em;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      color:#bfdbfe;
+    }
+    .blue-chip i{ width:12px; height:12px; }
+
+    .gradient-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(59,130,246,.10), transparent 35%),
+        radial-gradient(circle at 90% 0%, rgba(34,211,238,.08), transparent 35%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      box-shadow:0 12px 20px rgba(2,6,23,.16), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .gradient-card::before{
+      content:"";
+      position:absolute; inset:auto -25% -55% -25%;
+      height:140px;
+      background:radial-gradient(circle at 50% 0%, rgba(59,130,246,.15), transparent 70%);
+      pointer-events:none;
+    }
+
+    .flow-line{ position:relative; overflow:hidden; }
+    .flow-line::after{
+      content:"";
+      position:absolute; left:-25%; top:0; bottom:0; width:18%;
+      background:linear-gradient(90deg, transparent, rgba(96,165,250,.18), transparent);
+      animation:flowBar 3.4s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes flowBar{
+      from{ transform:translateX(0); }
+      to{ transform:translateX(650%); }
+    }
+
+    .marquee-wrap{
+      overflow:hidden;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.02);
+    }
+    .marquee-track{
+      display:flex;
+      gap:12px;
+      width:max-content;
+      padding:12px;
+      animation:marq 22s linear infinite;
+    }
+    .marquee-wrap:hover .marquee-track{ animation-play-state:paused; }
+    @keyframes marq{
+      from{ transform:translateX(0); }
+      to{ transform:translateX(-50%); }
+    }
+
+    /* ===== mockup ===== */
+    #site-preview,
+    .browser-mockup,
+    #card-content,
+    .product-carousel,
+    .product-card-sim{ contain:layout paint style; }
+
+    .browser-mockup{
+      background:var(--mock-bg);
+      color:var(--mock-text);
+      border-radius:28px;
+      overflow:hidden;
+      height:780px;
+      display:flex;
+      flex-direction:column;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 20px 40px rgba(0,0,0,.35), 0 4px 12px rgba(2,6,23,.22);
+      position:relative;
+      transform:translateZ(0);
+    }
+    .browser-mockup::before{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 36%);
+      z-index:0;
+    }
+
+    .user-theme-bg{ background-color:var(--user-color) !important; }
+    .user-theme-text{ color:var(--user-color) !important; }
+    .user-theme-border{ border-color:var(--user-color) !important; }
+    .user-theme-bg-soft{ background-color:var(--user-color-soft) !important; }
+
+    .card-tab{
+      padding:12px 14px;
+      font-size:9px;
+      font-weight:900;
+      text-transform:uppercase;
+      cursor:pointer;
+      border-bottom:3px solid transparent;
+      color:#64748b;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      transition:all .2s ease;
+      user-select:none;
+      white-space:nowrap;
+      min-width:0;
+      flex:1;
+      text-align:center;
+    }
+    .card-tab:hover{ background:#f8fafc; color:#334155; }
+    .card-tab.active{
+      color:var(--user-color);
+      border-bottom-color:var(--user-color);
+      background:linear-gradient(180deg, rgba(59,130,246,.06), transparent);
+    }
+
+    #card-content{
+      background:
+        radial-gradient(circle at 12% 8%, rgba(59,130,246,.05), transparent 35%),
+        radial-gradient(circle at 95% 0%, rgba(34,211,238,.05), transparent 30%),
+        var(--mock-bg);
+      position:relative;
+      z-index:1;
+      overflow-x:hidden;
+    }
+
+    .tab-anim{ transition:opacity .22s ease, transform .22s ease; will-change:opacity, transform; }
+    .tab-out-left{ opacity:0; transform:translateX(-12px); }
+    .tab-out-right{ opacity:0; transform:translateX(12px); }
+
+    .mock-loading{
+      position:absolute; inset:0;
+      z-index:30;
+      background:rgba(255,255,255,.92);
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+      opacity:0; pointer-events:none;
+      transition:opacity .2s ease;
+    }
+    .mock-loading.active{ opacity:1; pointer-events:auto; }
+
+    .spinner{
+      width:30px; height:30px; border-radius:999px;
+      border:3px solid #dbeafe; border-top-color:var(--user-color);
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg);} }
+    .skeleton{
+      width:70%; height:10px; border-radius:999px;
+      background:linear-gradient(90deg,#eef2ff,#f8fafc,#eef2ff);
+      background-size:180% 100%;
+      animation:skel 1.2s ease-in-out infinite;
+    }
+    @keyframes skel{ 0%{background-position:0 0;} 100%{background-position:180% 0;} }
+
+    /* mock hero */
+    .mini-hero{
+      position:relative;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid var(--mock-border);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(59,130,246,.15), transparent 42%),
+        radial-gradient(circle at 85% 10%, rgba(34,211,238,.12), transparent 35%),
+        linear-gradient(135deg, #f8fbff 0%, #f1f5ff 45%, #eef2ff 100%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+      min-height:240px;
+    }
+    .mini-grid{
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(rgba(59,130,246,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,.06) 1px, transparent 1px);
+      background-size:22px 22px;
+      opacity:.8;
+      mask-image:radial-gradient(circle at 50% 50%, black, transparent 85%);
+      pointer-events:none;
+    }
+
+    .floating-chip{
+      position:absolute;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid #dbeafe;
+      background:rgba(255,255,255,.92);
+      color:#1e3a8a;
+      font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.12em;
+      box-shadow:0 8px 18px rgba(59,130,246,.1);
+      animation:chipFloat 5s ease-in-out infinite;
+      pointer-events:none;
+      z-index:2;
+    }
+    .floating-chip.ch1{ top:12px; right:12px; }
+    .floating-chip.ch2{ top:48px; right:56px; animation-delay:-1.5s; }
+    .floating-chip.ch3{ bottom:14px; left:12px; animation-delay:-2.4s; }
+    @keyframes chipFloat{
+      0%,100%{ transform:translate(0,0);}
+      50%{ transform:translate(4px,-6px);}
+    }
+
+    .mini-3d-stage{
+      position:relative;
+      width:100%; height:152px;
+      border-radius:16px; overflow:hidden;
+      border:1px solid rgba(59,130,246,.12);
+      background:linear-gradient(180deg, #081224, #040b18);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+      margin-top:10px;
+      isolation:isolate;
+    }
+    .mini-3d-stage .scan{
+      position:absolute; inset:-25%;
+      background:linear-gradient(180deg, transparent 35%, rgba(96,165,250,.10) 50%, transparent 65%);
+      animation:scanMove 3s linear infinite;
+      z-index:1; pointer-events:none;
+    }
+    @keyframes scanMove{
+      from{ transform:translateY(-50%);}
+      to{ transform:translateY(60%);}
+    }
+
+    .mini-orb{
+      position:absolute; left:50%; top:50%;
+      width:92px; height:92px; transform:translate(-50%,-50%);
+      border-radius:999px;
+      border:2px solid rgba(96,165,250,.45);
+      box-shadow:0 0 25px rgba(59,130,246,.25), inset 0 0 25px rgba(59,130,246,.12);
+      animation:orbSpin 6s linear infinite;
+      z-index:2;
+    }
+    .mini-orb::before,.mini-orb::after{ content:""; position:absolute; border-radius:999px; }
+    .mini-orb::before{ inset:10px; border:1px solid rgba(34,211,238,.35); }
+    .mini-orb::after{ inset:-14px; border:1px solid rgba(59,130,246,.25); transform:rotate(32deg); }
+    @keyframes orbSpin{
+      from{ transform:translate(-50%,-50%) rotate(0deg);}
+      to{ transform:translate(-50%,-50%) rotate(360deg);}
+    }
+
+    .mini-cube{
+      position:absolute; left:50%; top:50%;
+      width:54px; height:54px;
+      transform-style:preserve-3d;
+      transform:translate(-50%,-50%) rotateX(58deg) rotateZ(45deg);
+      animation:cubeSpin 5s linear infinite;
+      z-index:3;
+    }
+    @keyframes cubeSpin{
+      0%{ transform:translate(-50%,-50%) rotateX(58deg) rotateZ(0deg); }
+      100%{ transform:translate(-50%,-50%) rotateX(58deg) rotateZ(360deg); }
+    }
+    .mini-cube i{
+      position:absolute; inset:0;
+      border-radius:10px;
+      background:linear-gradient(135deg, rgba(59,130,246,.85), rgba(34,211,238,.75));
+      box-shadow:0 0 18px rgba(59,130,246,.35);
+      border:1px solid rgba(255,255,255,.15);
+    }
+    .mini-cube i:nth-child(1){ transform:translateZ(18px); }
+    .mini-cube i:nth-child(2){ transform:rotateY(90deg) translateZ(18px); opacity:.8; }
+    .mini-cube i:nth-child(3){ transform:rotateX(90deg) translateZ(18px); opacity:.7; }
+
+    .mini-particles{ position:absolute; inset:0; pointer-events:none; z-index:0; }
+    .mini-particles span{
+      position:absolute; border-radius:999px;
+      background:rgba(96,165,250,.75);
+      box-shadow:0 0 8px rgba(96,165,250,.4);
+      animation:miniRise linear infinite; opacity:0;
+    }
+    @keyframes miniRise{
+      0%{ transform:translateY(22px); opacity:0; }
+      15%{ opacity:.6; }
+      100%{ transform:translateY(-110px); opacity:0; }
+    }
+
+    .mini-search-wrap{ position:relative; margin-top:12px; }
+    .mini-search-glow{
+      position:absolute; inset:-1px; border-radius:14px;
+      background:linear-gradient(90deg, rgba(59,130,246,.14), rgba(34,211,238,.12), rgba(59,130,246,.14));
+      filter:blur(5px); opacity:.55; pointer-events:none;
+    }
+    .mini-search{
+      width:100%; position:relative;
+      border:1px solid var(--mock-border); border-radius:14px;
+      padding:12px 14px 12px 40px;
+      font-size:12px;
+      color:var(--mock-text); background:var(--mock-panel);
+      outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease;
+    }
+    .mini-search:focus{
+      border-color:var(--user-color);
+      box-shadow:0 0 0 4px rgba(59,130,246,.08);
+    }
+
+    .mini-panel{
+      border:1px solid var(--mock-border);
+      border-radius:16px;
+      background:var(--mock-panel);
+      box-shadow:0 6px 14px rgba(15,23,42,.04);
+    }
+
+    .metric-card{
+      border:1px solid var(--mock-border);
+      border-radius:14px;
+      background:var(--mock-panel);
+      box-shadow:0 4px 10px rgba(15,23,42,.04);
+      transition:transform .2s ease, box-shadow .2s ease;
+      min-width:0;
+    }
+    .metric-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 14px rgba(15,23,42,.06);
+    }
+
+    .fake-chart{
+      position:relative;
+      height:120px;
+      border:1px solid var(--mock-border);
+      border-radius:14px;
+      overflow:hidden;
+      background:
+        linear-gradient(rgba(148,163,184,.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,.10) 1px, transparent 1px),
+        var(--mock-panel);
+      background-size:100% 24px, 24px 100%, auto;
+      box-shadow:0 6px 14px rgba(15,23,42,.04);
+    }
+    .fake-chart svg{ width:100%; height:100%; display:block; }
+    .fake-chart .line{
+      fill:none; stroke:var(--user-color); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round;
+      stroke-dasharray:300; stroke-dashoffset:300; animation:drawLine 1s ease forwards;
+    }
+    .fake-chart .area{ fill:rgba(59,130,246,.14); }
+    .fake-chart .dot{
+      fill:#fff; stroke:var(--user-color); stroke-width:2;
+      animation:dotPulse 2s ease-in-out infinite;
+      transform-origin:center;
+    }
+    @keyframes drawLine{ to{ stroke-dashoffset:0; } }
+    @keyframes dotPulse{
+      0%,100%{ transform:scale(1); opacity:1; }
+      50%{ transform:scale(1.12); opacity:.85; }
+    }
+
+    .status-pill{
+      font-size:8px; padding:4px 8px;
+      border-radius:999px; font-weight:900; text-transform:uppercase; letter-spacing:.08em;
+      border:1px solid;
+      white-space:nowrap;
+    }
+
+    .product-carousel{
+      display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px;
+      scrollbar-width:thin; scrollbar-color:var(--user-color) #e2e8f0;
+      -webkit-overflow-scrolling:touch;
+    }
+    .product-carousel::-webkit-scrollbar{ height:6px; }
+    .product-carousel::-webkit-scrollbar-track{ background:#e2e8f0; border-radius:999px; }
+    .product-carousel::-webkit-scrollbar-thumb{ background:var(--user-color); border-radius:999px; }
+
+    .product-card-sim{
+      flex:0 0 230px; scroll-snap-align:start;
+      border:1px solid var(--mock-border); border-radius:18px; padding:14px;
+      background:var(--mock-panel);
+      box-shadow:0 6px 14px rgba(15,23,42,.06);
+      transition:transform .2s ease, box-shadow .2s ease;
+      position:relative; overflow:hidden;
+      display:flex; flex-direction:column; justify-content:flex-start;
+      min-height:240px;
+    }
+    .product-card-sim:hover{
+      transform:translateY(-4px);
+      box-shadow:0 10px 18px rgba(15,23,42,.08);
+    }
+    .product-card-sim::before{
+      content:"";
+      position:absolute; top:-30px; left:-30px;
+      width:100px; height:100px; border-radius:999px;
+      background:radial-gradient(circle, rgba(59,130,246,.10), transparent 70%);
+      pointer-events:none;
+    }
+
+    .product-thumb{
+      width:100%; aspect-ratio:16/9;
+      border-radius:14px;
+      border:1px solid rgba(59,130,246,.12);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 40%),
+        linear-gradient(135deg, rgba(59,130,246,.16), rgba(34,211,238,.12), rgba(59,130,246,.06));
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+    .product-thumb::after{
+      content:"";
+      position:absolute; inset:-25%;
+      background:linear-gradient(120deg, transparent 35%, rgba(255,255,255,.22), transparent 62%);
+      transform:translateX(-120%) rotate(8deg);
+      animation:shimmer 3.8s ease infinite;
+      pointer-events:none;
+    }
+    @keyframes shimmer{
+      0%{ transform:translateX(-120%) rotate(8deg); }
+      50%{ transform:translateX(0%) rotate(8deg); }
+      100%{ transform:translateX(120%) rotate(8deg); }
+    }
+
+    .summary-item{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:12px;
+      border:1px solid var(--mock-border);
+      background:var(--mock-panel);
+      min-width:0;
+    }
+    .summary-item span:last-child{
+      text-align:right;
+      max-width:70%;
+      overflow-wrap:anywhere;
+    }
+
+    .mock-segment{
+      display:flex; gap:6px; flex-wrap:wrap;
+    }
+    .mock-segment button{
+      font-size:8px; font-weight:900; text-transform:uppercase;
+      padding:6px 8px; border-radius:999px;
+      border:1px solid var(--mock-border);
+      background:var(--mock-panel); color:var(--mock-muted);
+      transition:.2s ease;
+    }
+    .mock-segment button.active{
+      color:#fff; background:var(--user-color); border-color:transparent;
+      box-shadow:0 8px 16px rgba(59,130,246,.2);
+    }
+
+    /* mock dark */
+    .browser-mockup.mock-dark{
+      --mock-bg:#0b1220;
+      --mock-panel:rgba(255,255,255,.02);
+      --mock-text:#e5e7eb;
+      --mock-muted:#94a3b8;
+      --mock-border:rgba(148,163,184,.15);
+      box-shadow:0 22px 42px rgba(0,0,0,.5), 0 4px 12px rgba(2,6,23,.35);
+      border-color:rgba(148,163,184,.12);
+    }
+    .browser-mockup.mock-dark .bg-gray-100{ background:#0f172a !important; }
+    .browser-mockup.mock-dark .bg-white{ background:#0b1220 !important; }
+    .browser-mockup.mock-dark .card-tab{ color:#94a3b8; }
+    .browser-mockup.mock-dark .card-tab:hover{ background:rgba(255,255,255,.03); color:#dbeafe; }
+    .browser-mockup.mock-dark .card-tab.active{
+      color:#93c5fd; border-bottom-color:#60a5fa;
+      background:linear-gradient(180deg, rgba(59,130,246,.10), transparent);
+    }
+    .browser-mockup.mock-dark #card-content{
+      background:
+        radial-gradient(circle at 12% 8%, rgba(59,130,246,.09), transparent 35%),
+        radial-gradient(circle at 95% 0%, rgba(34,211,238,.08), transparent 30%),
+        var(--mock-bg);
+    }
+    .browser-mockup.mock-dark .mini-hero{
+      background:
+        radial-gradient(circle at 15% 20%, rgba(59,130,246,.15), transparent 42%),
+        radial-gradient(circle at 85% 10%, rgba(34,211,238,.12), transparent 35%),
+        linear-gradient(135deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    }
+    .browser-mockup.mock-dark .floating-chip{
+      background:rgba(15,23,42,.8); border-color:rgba(96,165,250,.15); color:#bfdbfe;
+    }
+    .browser-mockup.mock-dark .mini-search{
+      background:rgba(2,6,23,.5); color:#e5e7eb; border-color:rgba(96,165,250,.2);
+    }
+    .browser-mockup.mock-dark .mini-panel,
+    .browser-mockup.mock-dark .metric-card,
+    .browser-mockup.mock-dark .product-card-sim,
+    .browser-mockup.mock-dark .summary-item,
+    .browser-mockup.mock-dark .fake-chart{
+      background:var(--mock-panel) !important;
+      border-color:var(--mock-border) !important;
+      box-shadow:none !important;
+    }
+    .browser-mockup.mock-dark .product-thumb{
+      border-color:rgba(96,165,250,.18) !important;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 40%),
+        linear-gradient(135deg, rgba(59,130,246,.18), rgba(34,211,238,.16), rgba(59,130,246,.08)) !important;
+    }
+    .browser-mockup.mock-dark .mock-loading{
+      background:rgba(11,18,32,.92);
+    }
+    .browser-mockup.mock-dark .skeleton{
+      background:linear-gradient(90deg, rgba(148,163,184,.12), rgba(255,255,255,.04), rgba(148,163,184,.12));
+      background-size:180% 100%;
+    }
+
+    /* ===== PATCH PERFORMANCE no simulador ===== */
+    #simulador .glass,
+    #simulador .glass-strong{
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)) !important;
+    }
+    body.simulator-focus .floating-chip,
+    body.simulator-focus .mini-3d-stage .scan,
+    body.simulator-focus .mini-orb,
+    body.simulator-focus .mini-cube,
+    body.simulator-focus .mini-particles span,
+    body.simulator-focus .product-thumb::after,
+    body.simulator-focus .fake-chart .dot{
+      animation-play-state:paused !important;
+    }
+    body.simulator-focus .product-card-sim,
+    body.simulator-focus .metric-card,
+    body.simulator-focus .card-tab{
+      transition-duration:.12s !important;
+    }
+
+    /* ===== Assistente IA flutuante (SEM “mensagenzinha”) ===== */
+    .ai-assistant{
+      position:fixed;
+      right:20px;
+      bottom:98px; /* acima do whatsapp */
+      z-index:9998;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:10px;
+      max-width:min(92vw, 380px);
+    }
+
+    /* Botão bolinha */
+    .ai-bubble-btn{
+      width:66px; height:66px; border-radius:18px;
+      border:1px solid rgba(255,255,255,.18);
+      background:
+        radial-gradient(circle at 25% 20%, rgba(255,255,255,.16), transparent 40%),
+        linear-gradient(135deg, #1e3a8a, #2563eb, #38bdf8);
+      box-shadow:0 12px 26px rgba(37,99,235,.35), inset 0 1px 0 rgba(255,255,255,.18);
+      display:grid; place-items:center;
+      cursor:pointer;
+      transition:.25s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .ai-bubble-btn:hover{ transform:translateY(-2px) scale(1.03); }
+    .ai-bubble-btn::after{
+      content:"";
+      position:absolute; inset:-40%;
+      background:linear-gradient(120deg, transparent 35%, rgba(255,255,255,.2), transparent 65%);
+      transform:translateX(-120%) rotate(10deg);
+      animation:shimmer 4.4s ease infinite;
+      pointer-events:none;
+    }
+
+    /* “Personagem” do robô (gesticulando) */
+    .ai-avatar{
+      width:30px; height:30px;
+      border-radius:10px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+      position:relative;
+      box-shadow:0 10px 18px rgba(2,6,23,.22), inset 0 1px 0 rgba(255,255,255,.15);
+      animation:botBounce 2.4s ease-in-out infinite;
+    }
+    @keyframes botBounce{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-2px); }
+    }
+    .ai-avatar .eye{
+      position:absolute; top:10px;
+      width:6px; height:6px; border-radius:999px;
+      background:#dbeafe;
+      box-shadow:0 0 12px rgba(96,165,250,.45);
+      animation:botBlink 4.2s ease-in-out infinite;
+    }
+    .ai-avatar .eye.e1{ left:9px; }
+    .ai-avatar .eye.e2{ right:9px; }
+    @keyframes botBlink{
+      0%,6%,100%{ transform:scaleY(1); }
+      3%{ transform:scaleY(.15); }
+    }
+    .ai-avatar .mouth{
+      position:absolute; left:50%; top:19px;
+      width:14px; height:4px;
+      transform:translateX(-50%);
+      border-radius:999px;
+      background:rgba(191,219,254,.8);
+      opacity:.85;
+    }
+    /* antena */
+    .ai-avatar::before{
+      content:"";
+      position:absolute; left:50%; top:-7px;
+      width:10px; height:10px;
+      transform:translateX(-50%);
+      border-radius:999px;
+      background:rgba(34,211,238,.55);
+      box-shadow:0 0 16px rgba(34,211,238,.35);
+      animation:antennaPulse 1.9s ease-in-out infinite;
+    }
+    @keyframes antennaPulse{
+      0%,100%{ transform:translateX(-50%) scale(1); opacity:.9; }
+      50%{ transform:translateX(-50%) scale(1.14); opacity:1; }
+    }
+    /* “braços” gesticulando */
+    .ai-arm{
+      position:absolute; top:13px;
+      width:12px; height:6px; border-radius:999px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+      transform-origin:center;
+      opacity:.85;
+    }
+    .ai-arm.l{ left:-8px; animation:armWaveL 1.7s ease-in-out infinite; }
+    .ai-arm.r{ right:-8px; animation:armWaveR 1.9s ease-in-out infinite; }
+    @keyframes armWaveL{
+      0%,100%{ transform:rotate(-10deg) translateY(0); }
+      50%{ transform:rotate(18deg) translateY(-1px); }
+    }
+    @keyframes armWaveR{
+      0%,100%{ transform:rotate(10deg) translateY(0); }
+      50%{ transform:rotate(-18deg) translateY(-1px); }
+    }
+
+    /* Painel do assistente */
+    .ai-panel{
+      width:min(92vw, 380px);
+      height:min(72vh, 560px);
+      border-radius:22px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(circle at 15% 8%, rgba(59,130,246,.12), transparent 35%),
+        radial-gradient(circle at 95% 0%, rgba(34,211,238,.08), transparent 35%),
+        rgba(2,6,23,.90);
+      box-shadow:0 22px 46px rgba(2,6,23,.42), inset 0 1px 0 rgba(255,255,255,.06);
+      display:none;
+      flex-direction:column;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .ai-panel.open{ display:flex; }
+
+    .ai-header{
+      padding:14px 14px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+    }
+    .ai-header-left{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .ai-mini-avatar{
+      width:38px; height:38px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);
+      display:grid; place-items:center;
+      position:relative;
+      box-shadow:0 10px 18px rgba(2,6,23,.25);
+      flex:0 0 auto;
+    }
+    .ai-mini-avatar .ai-avatar{ transform:scale(.9); animation:botBounce 2.4s ease-in-out infinite; }
+    .ai-header .meta{ min-width:0; }
+    .ai-header h4{
+      font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.12em;
+      color:#dbeafe; margin:0;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .ai-header p{
+      margin:2px 0 0; font-size:10px; color:#93c5fd; font-weight:700;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      display:flex; align-items:center; gap:8px;
+    }
+    .ai-online{
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.08em;
+      color:#bbf7d0;
+    }
+    .ai-online .dot{
+      width:7px; height:7px; border-radius:999px;
+      background:#22c55e;
+      box-shadow:0 0 12px rgba(34,197,94,.35);
+      animation:onlinePulse 1.4s ease-in-out infinite;
+    }
+    @keyframes onlinePulse{
+      0%,100%{ transform:scale(1); opacity:1; }
+      50%{ transform:scale(1.2); opacity:.8; }
+    }
+
+    .ai-tools{
+      display:flex; gap:6px; align-items:center;
+    }
+    .ai-tool-btn{
+      width:34px; height:34px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      color:#cbd5e1; display:grid; place-items:center;
+      cursor:pointer; transition:.2s ease;
+    }
+    .ai-tool-btn:hover{ background:rgba(255,255,255,.07); color:#fff; }
+
+    .ai-messages{
+      flex:1;
+      overflow:auto;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      scroll-behavior:smooth;
+    }
+    .ai-msg{
+      max-width:90%;
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:12px;
+      line-height:1.4;
+      box-shadow:0 6px 14px rgba(2,6,23,.2);
+      border:1px solid transparent;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+    .ai-msg.bot{
+      align-self:flex-start;
+      background:rgba(255,255,255,.04);
+      border-color:rgba(255,255,255,.07);
+      color:#e2e8f0;
+    }
+    .ai-msg.user{
+      align-self:flex-end;
+      background:linear-gradient(135deg, rgba(59,130,246,.24), rgba(34,211,238,.18));
+      border-color:rgba(96,165,250,.18);
+      color:#eff6ff;
+    }
+    .ai-msg small{
+      display:block;
+      margin-top:6px;
+      color:#93c5fd;
+      font-weight:700;
+      font-size:10px;
+    }
+
+    .ai-actions{
+      display:flex; gap:8px;
+      margin-top:10px;
+    }
+    .ai-actions button{
+      flex:1;
+      border-radius:12px;
+      padding:10px 10px;
+      font-size:10px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      cursor:pointer;
+      transition:.2s ease;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      color:#dbeafe;
+    }
+    .ai-actions button.primary{
+      border-color:rgba(34,197,94,.25);
+      background:linear-gradient(180deg, rgba(49,229,126,.95), rgba(37,211,102,.95));
+      color:#072712;
+      box-shadow:0 10px 20px rgba(37,211,102,.18);
+    }
+    .ai-actions button:hover{ transform:translateY(-1px); }
+
+    .ai-quick{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      padding:0 12px 10px;
+      scrollbar-width:none;
+    }
+    .ai-quick::-webkit-scrollbar{ display:none; }
+    .ai-quick button{
+      flex:0 0 auto;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      color:#dbeafe;
+      padding:8px 10px;
+      font-size:10px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+    .ai-quick button:hover{
+      background:rgba(59,130,246,.16);
+      border-color:rgba(96,165,250,.22);
+    }
+
+    .ai-footer{
+      border-top:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.02);
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .ai-footer-top{
+      display:flex; gap:8px; align-items:center;
+    }
+    .ai-input{
+      flex:1;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      color:#e2e8f0;
+      padding:10px 12px;
+      font-size:12px;
+      outline:none;
+    }
+    .ai-input::placeholder{ color:#93a3b8; }
+    .ai-send{
+      width:42px; height:42px; border-radius:12px;
+      border:1px solid rgba(96,165,250,.22);
+      background:linear-gradient(135deg, rgba(37,99,235,.75), rgba(59,130,246,.85));
+      color:#fff;
+      display:grid; place-items:center;
+      cursor:pointer; transition:.2s ease;
+      box-shadow:0 8px 18px rgba(37,99,235,.24);
+      flex:0 0 auto;
+    }
+    .ai-send:hover{ transform:translateY(-1px); }
+
+    .ai-whats-big{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(34,197,94,.25);
+      background:linear-gradient(180deg, rgba(49,229,126,.95), rgba(37,211,102,.95));
+      color:#072712;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+      font-size:10px;
+      padding:12px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      cursor:pointer;
+      transition:.2s ease;
+      box-shadow:0 10px 22px rgba(37,211,102,.18);
+    }
+    .ai-whats-big:hover{ transform:translateY(-1px); }
+
+    /* mobile */
+    @media (max-width: 1024px){
+      .browser-mockup{ height:760px; }
+    }
+    @media (max-width: 768px){
+      .browser-mockup{ height:790px; }
+      .product-card-sim{ flex:0 0 84%; min-height:228px; }
+      .mini-3d-stage{ height:138px; }
+      .mini-hero{ min-height:220px; }
+      .ai-assistant{ right:14px; bottom:88px; }
+      .w-btn{ right:14px; bottom:14px; }
+      .ai-panel{ width:min(95vw, 380px); height:min(72vh, 540px); }
+      .card-tab{ font-size:8px; padding:10px 8px; gap:4px; }
+    }
+  </style>
 </head>
+
 <body class="selection:bg-blue-500 selection:text-white">
+  <div id="three-canvas-container"></div>
+  <div id="global-particles"></div>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+  <div class="bg-blob blob-4"></div>
+  <div id="mouse-light" class="mouse-light"></div>
 
-    <div id="three-canvas-container"></div>
-
-    <!-- Botão WhatsApp -->
-    <a href="https://wa.me/5533984684394" target="_blank" class="whatsapp-tesla group">
-        <i data-lucide="message-circle" class="w-7 h-7 text-white"></i>
-    </a>
-
-    <!-- Nav Principal -->
-    <nav class="fixed top-0 w-full z-[100] glass py-4">
-        <div class="container mx-auto px-6 flex justify-between items-center">
-            <span class="text-xl font-black italic uppercase tracking-tighter">ATOS <span class="text-blue-500">MIRANDA</span></span>
-            <div class="flex gap-6 items-center hidden md:flex">
-                <a href="#sobre" class="text-[10px] font-bold uppercase tracking-widest hover:text-blue-400">Sobre Mim</a>
-                <a href="#servicos" class="text-[10px] font-bold uppercase tracking-widest hover:text-blue-400">O que Ofereço</a>
-                <a href="#simulador" class="tesla-btn px-5 py-2.5 rounded-lg text-[10px]">Análise 2026</a>
+  <!-- Assistente IA (sem mensagenzinha) -->
+  <div class="ai-assistant" id="ai-assistant">
+    <div class="ai-panel" id="ai-panel" aria-live="polite">
+      <div class="ai-header">
+        <div class="ai-header-left">
+          <div class="ai-mini-avatar" aria-hidden="true">
+            <div class="ai-avatar">
+              <span class="ai-arm l"></span>
+              <span class="ai-arm r"></span>
+              <span class="eye e1"></span>
+              <span class="eye e2"></span>
+              <span class="mouth"></span>
             </div>
+          </div>
+          <div class="meta">
+            <h4>Assistente do Site</h4>
+            <p>
+              <span class="ai-online"><span class="dot"></span> online</span>
+              <span style="opacity:.7;">•</span>
+              <span style="opacity:.95;">Atos Miranda</span>
+            </p>
+          </div>
         </div>
-    </nav>
 
-    <!-- Hero -->
-    <section class="min-h-screen flex items-center pt-20 px-6">
-        <div class="container mx-auto grid md:grid-cols-2 gap-10 items-center">
-            <div class="reveal">
-                <div class="inline-block bg-blue-600/10 text-blue-400 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-6 border border-blue-500/20">
-                    Liderança Digital 2026
-                </div>
-                <h1 class="text-5xl md:text-8xl font-black leading-[0.9] mb-6">
-                    <span class="neon-line-text">ELITE</span> <br> 
-                    <span class="text-blue-500 italic">DIGITAL.</span>
-                </h1>
-                <p class="text-gray-400 text-base md:text-lg mb-8 max-w-sm font-medium">
-                    Construindo ecossistemas de luxo que transformam marcas comuns em autoridades mundiais.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <button onclick="document.getElementById('simulador').scrollIntoView({behavior:'smooth'})" class="tesla-btn px-8 py-4 rounded-xl text-[10px]">Gerar Meu Protótipo</button>
-                </div>
+        <div class="ai-tools">
+          <button class="ai-tool-btn" id="ai-voice-toggle" title="Narrar o site (voz)">
+            <i data-lucide="volume-2" class="w-4 h-4"></i>
+          </button>
+          <button class="ai-tool-btn" id="ai-clear" title="Limpar conversa">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+          <button class="ai-tool-btn" id="ai-close" title="Fechar">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="ai-messages" id="ai-messages"></div>
+
+      <div class="ai-quick" id="ai-quick">
+        <button data-q="Quero um site 3D">Site 3D</button>
+        <button data-q="Quais serviços você oferece?">Serviços</button>
+        <button data-q="Quero uma simulação do meu site">Simulação</button>
+        <button data-q="Qual o valor e prazo?">Valor e prazo</button>
+      </div>
+
+      <div class="ai-footer">
+        <button class="ai-whats-big" id="ai-whats-big">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          Conversar no WhatsApp
+        </button>
+
+        <div class="ai-footer-top">
+          <input id="ai-input" class="ai-input" type="text" placeholder="Digite sua dúvida..." />
+          <button id="ai-send" class="ai-send" aria-label="Enviar">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button class="ai-bubble-btn" id="ai-open" aria-label="Abrir assistente">
+      <div class="ai-avatar" aria-hidden="true">
+        <span class="ai-arm l"></span>
+        <span class="ai-arm r"></span>
+        <span class="eye e1"></span>
+        <span class="eye e2"></span>
+        <span class="mouth"></span>
+      </div>
+    </button>
+  </div>
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/5533984684394" target="_blank" class="w-btn" aria-label="WhatsApp">
+    <i data-lucide="message-circle" class="w-7 h-7 text-white"></i>
+  </a>
+
+  <!-- Nav -->
+  <nav class="fixed top-0 w-full z-[100] glass py-4">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <span class="text-xl font-black italic uppercase tracking-tighter">
+        ATOS <span class="text-blue-500">MIRANDA</span>
+      </span>
+
+      <div class="hidden md:flex gap-6 items-center">
+        <a href="#sobre" class="text-[10px] font-bold uppercase tracking-widest hover:text-blue-300 transition">Sobre Mim</a>
+        <a href="#servicos" class="text-[10px] font-bold uppercase tracking-widest hover:text-blue-300 transition">O que Ofereço</a>
+        <a href="#ecossistema" class="text-[10px] font-bold uppercase tracking-widest hover:text-blue-300 transition">Ecossistema</a>
+        <a href="#simulador" class="tesla-btn px-5 py-2.5 rounded-lg text-[10px]">Análise 2026</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero" class="min-h-screen flex items-center pt-24 md:pt-20 px-6 relative">
+    <div class="container mx-auto grid md:grid-cols-2 gap-10 items-center">
+      <div class="reveal">
+        <div class="inline-flex items-center gap-2 bg-blue-600/10 text-blue-300 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-6 border border-blue-500/20">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+          Liderança Digital 2026 • Experiência Imersiva
+        </div>
+
+        <h1 class="text-5xl md:text-8xl font-black leading-[0.9] mb-6">
+          <span class="neon-line-text">ELITE</span><br />
+          <span class="text-blue-500 italic">DIGITAL.</span>
+        </h1>
+
+        <p class="text-gray-300 text-base md:text-lg mb-8 max-w-md font-medium leading-relaxed">
+          Construindo ecossistemas de luxo que transformam marcas comuns em autoridades mundiais com design, estratégia e presença digital de alto impacto.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button onclick="document.getElementById('simulador').scrollIntoView({behavior:'smooth'})"
+                  class="tesla-btn px-8 py-4 rounded-xl text-[10px]">
+            Gerar Meu Protótipo
+          </button>
+          <button onclick="openAiPanel(true)" class="glass px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition text-center">
+            Falar com o Assistente
+          </button>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mt-8 max-w-2xl">
+          <span class="blue-chip"><i data-lucide="sparkles"></i>UX Premium</span>
+          <span class="blue-chip"><i data-lucide="layers-3"></i>3D Leve</span>
+          <span class="blue-chip"><i data-lucide="gauge"></i>Performance</span>
+          <span class="blue-chip"><i data-lucide="bot"></i>Assistente IA</span>
+          <span class="blue-chip"><i data-lucide="smartphone"></i>Mobile Ready</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mt-8 max-w-xl">
+          <div class="glass p-4 rounded-2xl text-center flow-line">
+            <p class="text-blue-300 text-lg font-black">3D</p>
+            <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Experiência</p>
+          </div>
+          <div class="glass p-4 rounded-2xl text-center flow-line">
+            <p class="text-blue-300 text-lg font-black">UX</p>
+            <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Conversão</p>
+          </div>
+          <div class="glass p-4 rounded-2xl text-center flow-line">
+            <p class="text-blue-300 text-lg font-black">2026</p>
+            <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Visual</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NÃO ALTERAR LUGAR DA FOTO -->
+      <div class="photo-3d-container group reveal">
+        <div id="photo-card" class="photo-3d-card relative aspect-[3/4] rounded-[50px] overflow-hidden glass-strong blue-border-glow">
+          <img src="img/perfil.jpg" alt="Atos Miranda"
+               class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+
+          <div class="hidden absolute inset-0 bg-slate-900 flex-col items-center justify-center p-10 text-center">
+            <i data-lucide="camera-off" class="w-12 h-12 text-blue-500/30 mb-4"></i>
+            <p class="text-[10px] font-black uppercase opacity-30 text-white">Sua Foto de Elite Aqui</p>
+          </div>
+
+          <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-400/10"></div>
+            <div class="absolute top-12 right-6 w-24 h-24 rounded-full blur-2xl bg-blue-500/15"></div>
+            <div class="absolute bottom-24 left-8 w-20 h-20 rounded-full blur-2xl bg-cyan-400/10"></div>
+          </div>
+
+          <div class="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+            <div class="glass px-3 py-2 rounded-xl">
+              <p class="text-[8px] font-black uppercase tracking-[.2em] text-blue-300">Posicionamento</p>
             </div>
-            
-            <div class="photo-3d-container group reveal">
-                <div id="photo-card" class="photo-3d-card relative aspect-[3/4] rounded-[50px] overflow-hidden glass border border-white/10 shadow-2xl">
-                    <!-- Espaço para sua foto aqui (Atualizado para perfil.jpg) -->
-                    <img src="img/perfil.jpg" alt="Atos Miranda" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                    
-                    <!-- Fallback se a imagem não existir -->
-                    <div class="hidden absolute inset-0 bg-slate-900 flex-col items-center justify-center p-10 text-center">
-                        <i data-lucide="camera-off" class="w-12 h-12 text-blue-500/30 mb-4"></i>
-                        <p class="text-[10px] font-black uppercase opacity-30 text-white">Sua Foto de Elite Aqui</p>
-                    </div>
-
-                    <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black via-black/60 to-transparent">
-                        <p class="text-3xl font-black italic text-white uppercase leading-none">Atos Miranda</p>
-                        <p class="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Fundador & Estrategista</p>
-                    </div>
-                </div>
+            <div class="glass px-3 py-2 rounded-xl">
+              <p class="text-[8px] font-black uppercase tracking-[.2em] text-white/80">2026</p>
             </div>
-        </div>
-    </section>
+          </div>
 
-    <!-- Sobre Mim -->
-    <section id="sobre" class="py-24 px-6 bg-black/20">
-        <div class="container mx-auto">
-            <div class="grid md:grid-cols-2 gap-16">
-                <div class="reveal">
-                    <h2 class="text-4xl font-black uppercase italic mb-6">Sobre <span class="text-blue-500">Mim</span></h2>
-                    <p class="text-gray-400 leading-relaxed mb-6">
-                        Sou Atos Miranda, um servo de Deus dedicado à excelência e à inovação tecnológica. Especialista em posicionamento de elite, meu foco é criar experiências digitais que não apenas existem, mas dominam o mercado através do design e da estratégia de 2026.
-                    </p>
-                    <div class="glass p-6 rounded-3xl border-l-4 border-blue-500">
-                        <p class="text-sm font-bold italic text-blue-400 uppercase tracking-widest">Compromisso</p>
-                        <p class="text-lg font-black mt-2 uppercase">Excelência para a Glória de Deus.</p>
-                    </div>
-                </div>
-                <div id="servicos" class="reveal">
-                    <h2 class="text-4xl font-black uppercase italic mb-6">O que <span class="text-blue-500">Ofereço</span></h2>
-                    <div class="grid gap-4">
-                        <div class="flex items-center gap-4 glass p-5 rounded-2xl hover:bg-white/5 transition-all">
-                            <i data-lucide="layout-template" class="text-blue-500"></i>
-                            <span class="font-bold text-sm uppercase">Sites Imersivos 3D (Elite)</span>
-                        </div>
-                        <div class="flex items-center gap-4 glass p-5 rounded-2xl hover:bg-white/5 transition-all">
-                            <i data-lucide="monitor" class="text-blue-500"></i>
-                            <span class="font-bold text-sm uppercase">Sites Institucionais Básicos</span>
-                        </div>
-                        <div class="flex items-center gap-4 glass p-5 rounded-2xl hover:bg-white/5 transition-all">
-                            <i data-lucide="image" class="text-blue-500"></i>
-                            <span class="font-bold text-sm uppercase">Pacotes de Imagens Premium</span>
-                        </div>
-                        <div class="flex items-center gap-4 glass p-5 rounded-2xl hover:bg-white/5 transition-all">
-                            <i data-lucide="line-chart" class="text-blue-500"></i>
-                            <span class="font-bold text-sm uppercase">Estratégias de Posicionamento</span>
-                        </div>
-                    </div>
-                </div>
+          <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black via-black/65 to-transparent z-10">
+            <p class="text-3xl font-black italic text-white uppercase leading-none">Atos Miranda</p>
+            <p class="text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Fundador & Estrategista</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- faixa de paleta azul (ajustada sem “empurrar” nada) -->
+  <section class="px-6 pt-8 pb-8 relative z-10">
+    <div class="container mx-auto reveal">
+      <div class="gradient-card p-4 md:p-5">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p class="text-[10px] text-blue-300 font-black uppercase tracking-[.18em]">Paleta de Identidade • Azul Profundo</p>
+            <h3 class="text-xl md:text-2xl font-black uppercase mt-1">Mistura de tons premium para presença digital de autoridade</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#dbeafe"></span>
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#93c5fd"></span>
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#60a5fa"></span>
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#3b82f6"></span>
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#2563eb"></span>
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#1d4ed8"></span>
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#0ea5e9"></span>
+            <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#22d3ee"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre + serviços -->
+  <section id="sobre" class="py-24 px-6 bg-black/15 relative">
+    <div class="container mx-auto">
+      <div class="grid md:grid-cols-2 gap-16">
+        <div class="reveal">
+          <h2 class="text-4xl font-black uppercase italic mb-6">Sobre <span class="text-blue-500">Mim</span></h2>
+          <p class="text-gray-300 leading-relaxed mb-6">
+            Sou Atos Miranda, um servo de Deus dedicado à excelência e à inovação tecnológica. Meu foco é criar experiências digitais que não apenas existem, mas comunicam valor, geram autoridade e posicionam marcas em um nível acima.
+          </p>
+
+          <div class="glass p-6 rounded-3xl border-l-4 border-blue-500 mb-6">
+            <p class="text-sm font-bold italic text-blue-300 uppercase tracking-widest">Compromisso</p>
+            <p class="text-lg font-black mt-2 uppercase">Excelência para a Glória de Deus.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="gradient-card p-4 rounded-2xl">
+              <p class="text-[9px] text-blue-300 font-black uppercase tracking-widest">Foco</p>
+              <p class="text-sm font-bold mt-1">Sites + Posicionamento</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Simulador -->
-    <section id="simulador" class="py-24 bg-black/50">
-        <div class="container mx-auto px-6">
-            <div class="grid lg:grid-cols-2 gap-12">
-                
-                <div class="reveal glass p-8 md:p-12 rounded-[40px] border-blue-500/20 h-fit">
-                    <h2 class="text-3xl font-black uppercase italic mb-8">Configurador <span class="text-blue-500">Tesla</span></h2>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <label class="text-[9px] font-black uppercase text-blue-400 mb-2 block tracking-widest">Nome do Cliente</label>
-                            <input type="text" id="u-name" placeholder="Ex: Atos Miranda" class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all">
-                        </div>
-                        <div>
-                            <label class="text-[9px] font-black uppercase text-blue-400 mb-2 block">Sua Marca</label>
-                            <input type="text" id="u-emp" placeholder="Nome da Empresa" class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all">
-                        </div>
-                        <div>
-                            <label class="text-[9px] font-black uppercase text-blue-400 mb-2 block">Cor Predominante (Português)</label>
-                            <input type="text" id="u-color-input" placeholder="Azul, Ouro, Verde, Vermelho..." class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all">
-                        </div>
-                        <button onclick="gerarAnalise()" class="w-full tesla-btn py-6 rounded-2xl text-[10px] mt-4 uppercase">Simular Projeto em Tempo Real</button>
-                    </div>
-                </div>
-
-                <!-- Card Interativo / Mockup -->
-                <div id="site-preview" class="hidden reveal">
-                    <div class="browser-mockup">
-                        <div class="bg-gray-100 px-4 py-3 flex items-center gap-4 border-b">
-                            <div class="flex gap-1.5">
-                                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-                                <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-                            </div>
-                            <div class="flex-1 relative">
-                                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                    <i data-lucide="search" class="w-3 h-3"></i>
-                                </div>
-                                <input type="text" disabled id="url-res-box" value="https://www.marca.com.br" class="w-full bg-white rounded-lg py-1.5 pl-8 pr-4 text-[9px] text-gray-500 outline-none border-none">
-                            </div>
-                        </div>
-
-                        <div class="bg-white border-b flex justify-around">
-                            <div onclick="switchCardTab('home')" id="tab-home" class="card-tab active">Home</div>
-                            <div onclick="switchCardTab('produtos')" id="tab-produtos" class="card-tab">Produtos</div>
-                            <div onclick="switchCardTab('finalizar')" id="tab-finalizar" class="card-tab">Finalizar</div>
-                        </div>
-
-                        <div class="flex-1 overflow-y-auto bg-white p-6 md:p-8" id="card-content">
-                            <!-- JS Inject -->
-                        </div>
-                    </div>
-                </div>
-
+            <div class="gradient-card p-4 rounded-2xl">
+              <p class="text-[9px] text-blue-300 font-black uppercase tracking-widest">Entrega</p>
+              <p class="text-sm font-bold mt-1">Visual premium e conversão</p>
             </div>
+            <div class="gradient-card p-4 rounded-2xl">
+              <p class="text-[9px] text-blue-300 font-black uppercase tracking-widest">Mobile</p>
+              <p class="text-sm font-bold mt-1">Adaptado para celular</p>
+            </div>
+            <div class="gradient-card p-4 rounded-2xl">
+              <p class="text-[9px] text-blue-300 font-black uppercase tracking-widest">Atendimento</p>
+              <p class="text-sm font-bold mt-1">Assistente + WhatsApp</p>
+            </div>
+          </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="py-16 text-center border-t border-white/5 bg-black">
-        <div class="container mx-auto px-6">
-            <p class="text-2xl font-black italic uppercase mb-2">ATOS <span class="text-blue-500">MIRANDA</span></p>
-            <p class="text-[8px] font-black text-gray-600 uppercase tracking-[1.5em] mb-8">EXCELÊNCIA PARA A GLÓRIA DE DEUS</p>
-            <p class="text-[9px] text-gray-700 font-bold uppercase tracking-widest">© 2026 - Todos os Direitos Reservados</p>
+        <div id="servicos" class="reveal">
+          <h2 class="text-4xl font-black uppercase italic mb-6">O que <span class="text-blue-500">Ofereço</span></h2>
+
+          <div class="grid gap-4">
+            <div class="flex items-center gap-4 gradient-card p-5 rounded-2xl hover:bg-white/5 transition">
+              <i data-lucide="layout-template" class="text-blue-400"></i>
+              <span class="font-bold text-sm uppercase">Sites Imersivos 3D (Elite)</span>
+            </div>
+            <div class="flex items-center gap-4 gradient-card p-5 rounded-2xl hover:bg-white/5 transition">
+              <i data-lucide="monitor" class="text-blue-400"></i>
+              <span class="font-bold text-sm uppercase">Sites Institucionais Estratégicos</span>
+            </div>
+            <div class="flex items-center gap-4 gradient-card p-5 rounded-2xl hover:bg-white/5 transition">
+              <i data-lucide="image" class="text-blue-400"></i>
+              <span class="font-bold text-sm uppercase">Pacotes de Imagens Premium</span>
+            </div>
+            <div class="flex items-center gap-4 gradient-card p-5 rounded-2xl hover:bg-white/5 transition">
+              <i data-lucide="line-chart" class="text-blue-400"></i>
+              <span class="font-bold text-sm uppercase">Estratégias de Posicionamento</span>
+            </div>
+            <div class="flex items-center gap-4 gradient-card p-5 rounded-2xl hover:bg-white/5 transition">
+              <i data-lucide="bot" class="text-blue-400"></i>
+              <span class="font-bold text-sm uppercase">Assistente Integrado (voz + chat)</span>
+            </div>
+          </div>
         </div>
-    </footer>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        lucide.createIcons();
+  <!-- Ecossistema -->
+  <section id="ecossistema" class="py-20 px-6">
+    <div class="container mx-auto">
+      <div class="reveal mb-10">
+        <p class="text-[10px] text-blue-300 font-black uppercase tracking-[.18em] mb-3">Ecossistema Digital</p>
+        <h2 class="text-3xl md:text-5xl font-black uppercase italic leading-tight">
+          Um site que <span class="text-blue-400">vende, impressiona e orienta</span> o cliente
+        </h2>
+      </div>
 
-        const colorMap = {
-            "azul": "royalblue", "verde": "#10b981", "preto": "#0a0a0a", "vermelho": "#ef4444", 
-            "amarelo": "#facc15", "dourado": "#d4af37", "ouro": "#d4af37", "branco": "#ffffff",
-            "cinza": "#6b7280", "roxo": "#8b5cf6", "rosa": "#ec4899", "laranja": "#f97316"
-        };
+      <div class="grid lg:grid-cols-3 gap-5">
+        <div class="gradient-card p-5 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center mb-4">
+            <i data-lucide="brain-circuit" class="text-blue-300"></i>
+          </div>
+          <h3 class="text-lg font-black uppercase mb-2">Experiência inteligente</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            Elementos visuais dinâmicos, leitura clara de conteúdo e fluxo pensado para prender atenção sem pesar o site.
+          </p>
+        </div>
 
-        function translateColor(input) {
-            const clean = input.toLowerCase().trim();
-            return colorMap[clean] || input;
+        <div class="gradient-card p-5 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-400/10 border border-cyan-300/20 flex items-center justify-center mb-4">
+            <i data-lucide="wand-sparkles" class="text-cyan-300"></i>
+          </div>
+          <h3 class="text-lg font-black uppercase mb-2">Visual premium em azul</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            Combinação de tons azuis, brilhos sutis, gradientes e camadas para criar uma estética de alto nível.
+          </p>
+        </div>
+
+        <div class="gradient-card p-5 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-400/10 border border-indigo-300/20 flex items-center justify-center mb-4">
+            <i data-lucide="smartphone" class="text-indigo-300"></i>
+          </div>
+          <h3 class="text-lg font-black uppercase mb-2">PC + celular</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            Layout ajustado para desktop e smartphone, mantendo visual forte, boa leitura e navegação fluida.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-5 mt-5">
+        <div class="gradient-card p-5 reveal">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <h3 class="text-lg font-black uppercase">Fluxo de conversão visual</h3>
+            <span class="blue-chip"><i data-lucide="zap"></i>Dinâmico</span>
+          </div>
+          <div class="space-y-3">
+            <div class="glass p-4 rounded-xl flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-400/20 grid place-items-center shrink-0"><i data-lucide="eye" class="w-4 h-4 text-blue-300"></i></div>
+              <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-300">1. Impacto</p>
+                <p class="text-sm text-gray-300">Hero visual forte com identidade, CTA e sensação premium logo na entrada.</p>
+              </div>
+            </div>
+            <div class="glass p-4 rounded-xl flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-cyan-400/10 border border-cyan-300/20 grid place-items-center shrink-0"><i data-lucide="compass" class="w-4 h-4 text-cyan-300"></i></div>
+              <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300">2. Direção</p>
+                <p class="text-sm text-gray-300">Simulador mostrando o esboço do site com base nos dados do cliente.</p>
+              </div>
+            </div>
+            <div class="glass p-4 rounded-xl flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-indigo-400/10 border border-indigo-300/20 grid place-items-center shrink-0"><i data-lucide="message-square-more" class="w-4 h-4 text-indigo-300"></i></div>
+              <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300">3. Atendimento</p>
+                <p class="text-sm text-gray-300">Assistente responde e encaminha pro WhatsApp com mensagem pronta.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gradient-card p-5 reveal">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <h3 class="text-lg font-black uppercase">Demonstração de confiança</h3>
+            <span class="blue-chip"><i data-lucide="shield-check"></i>Autoridade</span>
+          </div>
+
+          <div class="marquee-wrap">
+            <div class="marquee-track">
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-1">Identidade Premium</p>
+                <p class="text-sm text-gray-300">“Visual forte, elegante e profissional.”</p>
+              </div>
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300 mb-1">Navegação Fluida</p>
+                <p class="text-sm text-gray-300">“Fácil de entender e bonito no celular.”</p>
+              </div>
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300 mb-1">Posicionamento</p>
+                <p class="text-sm text-gray-300">“Transmite autoridade de cara.”</p>
+              </div>
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-1">Simulação</p>
+                <p class="text-sm text-gray-300">“O cliente entende rápido a ideia.”</p>
+              </div>
+
+              <!-- duplicado -->
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-1">Identidade Premium</p>
+                <p class="text-sm text-gray-300">“Visual forte, elegante e profissional.”</p>
+              </div>
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300 mb-1">Navegação Fluida</p>
+                <p class="text-sm text-gray-300">“Fácil de entender e bonito no celular.”</p>
+              </div>
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300 mb-1">Posicionamento</p>
+                <p class="text-sm text-gray-300">“Transmite autoridade de cara.”</p>
+              </div>
+              <div class="glass rounded-xl px-4 py-3 min-w-[220px]">
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-1">Simulação</p>
+                <p class="text-sm text-gray-300">“O cliente entende rápido a ideia.”</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mt-4">
+            <div class="glass p-3 rounded-xl text-center">
+              <p class="text-lg font-black text-blue-300">+UX</p>
+              <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Leitura</p>
+            </div>
+            <div class="glass p-3 rounded-xl text-center">
+              <p class="text-lg font-black text-cyan-300">+Voz</p>
+              <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Narração</p>
+            </div>
+            <div class="glass p-3 rounded-xl text-center">
+              <p class="text-lg font-black text-indigo-300">+CTA</p>
+              <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">WhatsApp</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Simulador -->
+  <section id="simulador" class="py-24 bg-black/35 relative">
+    <div class="container mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-12">
+
+        <!-- formulário -->
+        <div class="reveal glass-strong p-8 md:p-12 rounded-[36px] border-blue-500/20 h-fit relative overflow-hidden">
+          <div class="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-blue-500/20 blur-3xl"></div>
+          <div class="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-cyan-400/10 blur-3xl"></div>
+
+          <h2 class="text-3xl font-black uppercase italic mb-8">
+            Configurador <span class="text-blue-400">Tesla</span>
+          </h2>
+
+          <div class="space-y-6 relative z-10">
+            <div>
+              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block tracking-widest">Nome do Cliente</label>
+              <input type="text" id="u-name" placeholder="Ex: João da Silva"
+                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
+            </div>
+
+            <div>
+              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block">Sua Marca</label>
+              <input type="text" id="u-emp" placeholder="Nome da Empresa"
+                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
+            </div>
+
+            <div>
+              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block">Cor Predominante (Português)</label>
+              <input type="text" id="u-color-input" placeholder="Azul, Ciano, Dourado..."
+                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
+            </div>
+
+            <div class="grid grid-cols-4 gap-2">
+              <button type="button" onclick="quickColor('Azul')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Azul</button>
+              <button type="button" onclick="quickColor('Ciano')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Ciano</button>
+              <button type="button" onclick="quickColor('Indigo')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Índigo</button>
+              <button type="button" onclick="quickColor('Dourado')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Dourado</button>
+            </div>
+
+            <button onclick="gerarAnalise()" class="w-full tesla-btn py-6 rounded-2xl text-[10px] mt-4 uppercase">
+              Simular Projeto em Tempo Real
+            </button>
+
+            <div class="gradient-card p-4 rounded-2xl">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-300/20 grid place-items-center shrink-0">
+                  <i data-lucide="bot" class="w-4 h-4 text-blue-300"></i>
+                </div>
+                <div>
+                  <p class="text-[10px] font-black uppercase tracking-widest text-blue-300">Dica</p>
+                  <p class="text-sm text-gray-300">
+                    Preencha os campos e veja o card virar um esboço de site completo com home, produtos e finalização.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">
+              O card abaixo vira o esboço do site com seus dados
+            </p>
+          </div>
+        </div>
+
+        <!-- mockup -->
+        <div id="site-preview" class="hidden reveal">
+          <div id="mockup-root" class="browser-mockup">
+            <div id="mock-loading" class="mock-loading">
+              <div class="spinner"></div>
+              <div class="skeleton"></div>
+              <div class="skeleton" style="width:58%"></div>
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Gerando preview...</p>
+            </div>
+
+            <!-- browser bar -->
+            <div class="bg-gray-100 px-4 py-3 flex items-center gap-3 border-b relative z-10">
+              <div class="flex gap-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+              </div>
+
+              <div class="flex-1 relative min-w-0">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <i data-lucide="search" class="w-3 h-3"></i>
+                </div>
+                <input type="text" id="url-res-box" value="https://www.marca.com.br"
+                       class="w-full bg-white rounded-lg py-1.5 pl-8 pr-4 text-[9px] text-gray-500 outline-none border border-slate-200">
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <button id="mock-theme-toggle" class="text-slate-400 hover:text-slate-600 transition" title="Modo noturno">
+                  <i data-lucide="moon-star" class="w-4 h-4"></i>
+                </button>
+                <button id="mock-voice-toggle" class="text-slate-400 hover:text-slate-600 transition" title="Áudio no mockup">
+                  <i data-lucide="volume-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- tabs -->
+            <div class="bg-white border-b flex justify-around relative z-10">
+              <div onclick="switchCardTab('home')" id="tab-home" class="card-tab active">
+                <i data-lucide="house" class="w-3 h-3"></i> Home
+              </div>
+              <div onclick="switchCardTab('produtos')" id="tab-produtos" class="card-tab">
+                <i data-lucide="shopping-bag" class="w-3 h-3"></i> Produtos
+              </div>
+              <div onclick="switchCardTab('finalizar')" id="tab-finalizar" class="card-tab">
+                <i data-lucide="check-circle-2" class="w-3 h-3"></i> Finalizar
+              </div>
+            </div>
+
+            <!-- content -->
+            <div id="card-content" class="flex-1 overflow-y-auto p-5 md:p-6 tab-anim"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="px-6 pb-20">
+    <div class="container mx-auto reveal">
+      <div class="gradient-card rounded-[28px] p-8 md:p-10">
+        <div class="grid md:grid-cols-[1.2fr_.8fr] gap-6 items-center">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-[.18em] text-blue-300 mb-3">Pronto para subir de nível</p>
+            <h2 class="text-3xl md:text-5xl font-black uppercase italic leading-tight mb-4">
+              Seu projeto pode sair do <span class="text-blue-400">comum</span> para o <span class="text-cyan-300">memorável</span>
+            </h2>
+            <p class="text-gray-300 leading-relaxed max-w-2xl">
+              Me chama no WhatsApp e vamos transformar sua marca em uma presença digital de elite com identidade, estratégia e experiência.
+            </p>
+          </div>
+          <div class="grid gap-3">
+            <a href="https://wa.me/5533984684394" target="_blank" class="tesla-btn px-6 py-5 rounded-2xl text-center text-[10px]">
+              Falar no WhatsApp Agora
+            </a>
+            <button onclick="openAiPanel(true)" class="glass px-6 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition">
+              Abrir Assistente
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-16 text-center border-t border-white/5 bg-black/70">
+    <div class="container mx-auto px-6">
+      <p class="text-2xl font-black italic uppercase mb-2">ATOS <span class="text-blue-500">MIRANDA</span></p>
+      <p class="text-[8px] font-black text-gray-500 uppercase tracking-[1.3em] mb-8">EXCELÊNCIA PARA A GLÓRIA DE DEUS</p>
+      <p class="text-[9px] text-gray-600 font-bold uppercase tracking-widest">© 2026 - Todos os Direitos Reservados</p>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================
+       ICONS
+    ========================================= */
+    function refreshIcons(){
+      try { lucide.createIcons(); } catch(e){}
+    }
+    refreshIcons();
+
+    /* =========================================
+       CORES
+    ========================================= */
+    const colorMap = {
+      "azul":"#3b82f6",
+      "ciano":"#06b6d4",
+      "cyan":"#06b6d4",
+      "azul claro":"#60a5fa",
+      "azul escuro":"#1d4ed8",
+      "índigo":"#6366f1",
+      "indigo":"#6366f1",
+      "sky":"#38bdf8",
+      "verde":"#10b981",
+      "vermelho":"#ef4444",
+      "amarelo":"#facc15",
+      "dourado":"#d4af37",
+      "ouro":"#d4af37",
+      "branco":"#ffffff",
+      "cinza":"#6b7280",
+      "roxo":"#8b5cf6",
+      "rosa":"#ec4899",
+      "laranja":"#f97316",
+      "preto":"#0a0a0a"
+    };
+
+    function translateColor(input){
+      const clean = (input || "").toLowerCase().trim();
+      return colorMap[clean] || input || "#3b82f6";
+    }
+
+    function hexToRgba(hex, alpha=.14){
+      try{
+        const c = document.createElement("canvas").getContext("2d");
+        c.fillStyle = hex;
+        const value = c.fillStyle;
+        if(value.startsWith("#")){
+          let h = value.slice(1);
+          if(h.length === 3) h = h.split("").map(x => x+x).join("");
+          const r = parseInt(h.slice(0,2),16);
+          const g = parseInt(h.slice(2,4),16);
+          const b = parseInt(h.slice(4,6),16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
+      }catch(e){}
+      return `rgba(59,130,246,${alpha})`;
+    }
 
-        function applyUserColor(color) {
-            const translated = translateColor(color);
-            document.documentElement.style.setProperty('--user-color', translated);
+    function applyUserColor(color){
+      const translated = translateColor(color);
+      document.documentElement.style.setProperty("--user-color", translated);
+      document.documentElement.style.setProperty("--user-color-soft", hexToRgba(translated, .14));
+      document.documentElement.style.setProperty("--user-color-soft-2", hexToRgba(translated, .08));
+    }
+
+    function quickColor(colorName){
+      const input = document.getElementById("u-color-input");
+      if(input) input.value = colorName;
+      applyUserColor(colorName);
+
+      if(!document.getElementById("site-preview").classList.contains("hidden")){
+        switchCardTab(currentTabData.activeTab || "home", true);
+      }
+    }
+
+    /* =========================================
+       ESTADO
+    ========================================= */
+    let currentTabData = {
+      h1: "AUTORIDADE DIGITAL",
+      emp: "SUA MARCA",
+      name: "CLIENTE",
+      color: "Azul",
+      activeTab: "home",
+      products: [],
+      mockDark: false
+    };
+
+    let mockVoiceEnabled = true;
+    let globalVoiceEnabled = true;
+    let speechReady = false;
+    const spokenSectionIds = new Set();
+
+    const tabOrder = ["home","produtos","finalizar"];
+
+    function safeBrandUrl(brand){
+      const clean = (brand || "marca")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")
+        .replace(/[^a-z0-9]+/g,"");
+      return `https://www.${clean || "marca"}.com.br`;
+    }
+
+    function createDynamicHeadline(emp){
+      const first = ((emp || "Marca").trim().split(/\s+/)[0] || "Marca").toUpperCase();
+      const options = [
+        `ELITE ${first}`,
+        `${first} DIGITAL PRO`,
+        `AUTORIDADE ${first}`,
+        `${first} PREMIUM 3D`,
+        `EXPERIÊNCIA ${first}`
+      ];
+      return options[Math.floor(Math.random() * options.length)];
+    }
+
+    function generateProducts(emp){
+      const prefix = (emp || "Marca").split(" ")[0] || "Marca";
+      return [
+        { title:`Módulo 3D ${prefix}`, sub:"Premium Edition", icon:"box", badge:"3D" },
+        { title:"Sistema Tesla 2.0", sub:"Velocidade Máxima", icon:"zap", badge:"Speed" },
+        { title:"Vitrine Inteligente", sub:"Conversão Alta", icon:"store", badge:"AI" },
+        { title:"Landing Imersiva", sub:"Experiência 2026", icon:"sparkles", badge:"UX" },
+        { title:"SEO 2026", sub:"Dominar Google", icon:"trending-up", badge:"SEO" },
+        { title:"Assistente Pro", sub:"Atendimento 24h", icon:"message-circle", badge:"Bot" },
+        { title:"Dashboard Live", sub:"Dados em Tempo Real", icon:"bar-chart-3", badge:"Data" },
+        { title:"Checkout Premium", sub:"Finalização Rápida", icon:"credit-card", badge:"Sales" }
+      ];
+    }
+
+    /* =========================================
+       VOZ: mais “humana”
+       (depende das vozes do navegador — aqui a gente escolhe a melhor pt-BR disponível)
+    ========================================= */
+    function pickBestVoicePtBR(){
+      if(!("speechSynthesis" in window) || !window.speechSynthesis.getVoices) return null;
+      const voices = window.speechSynthesis.getVoices() || [];
+      const pt = voices.filter(v => /pt/i.test(v.lang));
+      const ptBR = pt.filter(v => /pt-BR/i.test(v.lang));
+
+      const rank = (v) => {
+        const n = (v.name || "").toLowerCase();
+        let score = 0;
+        if(/pt-br/i.test(v.lang)) score += 50;
+        if(n.includes("natural")) score += 35;
+        if(n.includes("google")) score += 25;
+        if(n.includes("microsoft")) score += 20;
+        if(n.includes("brasil")) score += 10;
+        return score;
+      };
+
+      const list = (ptBR.length ? ptBR : pt).sort((a,b) => rank(b)-rank(a));
+      return list[0] || null;
+    }
+
+    function speakText(text, opts={}){
+      if(!globalVoiceEnabled) return;
+      if(!("speechSynthesis" in window)) return;
+      try{
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "pt-BR";
+
+        /* Ajuste “humano”: levemente mais quente e natural */
+        u.rate = opts.rate ?? 1.02;
+        u.pitch = opts.pitch ?? 1.08;
+        u.volume = opts.volume ?? 0.95;
+
+        const best = pickBestVoicePtBR();
+        if(best) u.voice = best;
+
+        window.speechSynthesis.speak(u);
+      }catch(e){}
+    }
+
+    function userGestureUnlockSpeech(){
+      if(speechReady) return;
+      speechReady = true;
+      window.removeEventListener("click", userGestureUnlockSpeech);
+      window.removeEventListener("keydown", userGestureUnlockSpeech);
+      window.removeEventListener("touchstart", userGestureUnlockSpeech);
+
+      // boas-vindas suaves (só uma vez, depois do 1º clique)
+      setTimeout(() => {
+        if(globalVoiceEnabled){
+          speakText("Boas-vindas. Se quiser, eu posso narrar as seções e te ajudar a simular seu site.");
         }
+      }, 180);
+    }
+    window.addEventListener("click", userGestureUnlockSpeech, { passive:true });
+    window.addEventListener("keydown", userGestureUnlockSpeech, { passive:true });
+    window.addEventListener("touchstart", userGestureUnlockSpeech, { passive:true });
 
-        let currentTabData = { h1: "AUTORIDADE DIGITAL", emp: "SUA MARCA", name: "CLIENTE", color: "Azul" };
+    function narrateSection(id){
+      if(!globalVoiceEnabled) return;
+      if(spokenSectionIds.has(id)) return;
+      spokenSectionIds.add(id);
 
-        function initCard3D() {
-            const container = document.getElementById('card-3d-demo');
-            if(!container) return;
-            
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            container.appendChild(renderer.domElement);
+      const lines = {
+        hero: "Você está no início do site. Aqui fica a identidade e os botões principais.",
+        sobre: "Agora você está na seção sobre e serviços. Aqui a pessoa entende o que você oferece.",
+        ecossistema: "Essa parte mostra o ecossistema digital e o fluxo de conversão.",
+        simulador: "Chegamos no simulador. Preencha nome, marca e cor para gerar o esboço do site."
+      };
 
-            const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-            const material = new THREE.MeshPhongMaterial({ 
-                color: translateColor(currentTabData.color),
-                wireframe: true,
-                emissive: 0x333333
-            });
-            const cube = new THREE.Mesh(geometry, material);
-            scene.add(cube);
+      if(lines[id]) speakText(lines[id], { rate: 1.02, pitch: 1.08 });
+    }
 
-            const light = new THREE.PointLight(0xffffff, 1, 100);
-            light.position.set(5, 5, 5);
-            scene.add(light);
-            scene.add(new THREE.AmbientLight(0x404040));
+    /* =========================================
+       MOCKUP HELPERS
+    ========================================= */
+    function showMockLoading(show){
+      const el = document.getElementById("mock-loading");
+      if(!el) return;
+      el.classList.toggle("active", !!show);
+    }
 
-            camera.position.z = 4;
+    function buildMiniParticles(total=18){
+      let out = "";
+      for(let i=0;i<total;i++){
+        const left = Math.random()*100;
+        const delay = (Math.random()*-6).toFixed(2);
+        const dur = (3 + Math.random()*4).toFixed(2);
+        const size = (2 + Math.random()*2).toFixed(1);
+        out += `<span style="left:${left}%; bottom:${-10 - Math.random()*30}px; animation-delay:${delay}s; animation-duration:${dur}s; width:${size}px; height:${size}px;"></span>`;
+      }
+      return out;
+    }
 
-            function animate() {
-                requestAnimationFrame(animate);
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.01;
-                renderer.render(scene, camera);
-            }
-            animate();
-        }
+    function buildFakeChartSvg(){
+      const points = [
+        [8,92],[34,84],[60,88],[86,72],[112,66],[138,74],
+        [164,58],[190,52],[216,60],[242,44],[268,40],[294,32]
+      ];
+      const line = points.map((p,i)=>`${i===0?'M':'L'} ${p[0]} ${p[1]}`).join(" ");
+      const area = `${line} L 294 118 L 8 118 Z`;
+      const last = points[points.length-1];
+      return `
+        <svg viewBox="0 0 302 120" preserveAspectRatio="none" aria-hidden="true">
+          <path class="area" d="${area}"></path>
+          <path class="line" d="${line}"></path>
+          <circle class="dot" cx="${last[0]}" cy="${last[1]}" r="4"></circle>
+        </svg>
+      `;
+    }
 
-        function whatsAction() {
-            const msg = encodeURIComponent(`Olá Atos! Gostei muito da simulação para a ${currentTabData.emp}. Meu nome é ${currentTabData.name}. Vamos fechar?`);
-            window.open(`https://wa.me/5533984684394?text=${msg}`, '_blank');
-        }
+    function buildProductCard(p){
+      return `
+        <div class="product-card-sim">
+          <div class="flex items-center justify-between mb-3 gap-2">
+            <span class="status-pill" style="color: var(--user-color); border-color: rgba(59,130,246,.25); background: rgba(59,130,246,.06)">${p.badge}</span>
+            <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
+          </div>
 
-        function switchCardTab(tab) {
-            const content = document.getElementById('card-content');
-            document.querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
+          <div class="product-thumb mb-4">
+            <i data-lucide="${p.icon}" class="w-9 h-9 user-theme-text relative z-10"></i>
+          </div>
 
-            if (tab === 'home') {
-                content.innerHTML = `
-                    <div id="card-3d-demo"></div>
-                    <h3 class="text-2xl font-black text-slate-900 leading-none mb-3 user-theme-text">${currentTabData.h1}</h3>
-                    <p class="text-slate-500 text-xs mb-6 italic">Experiência imersiva 3D customizada para ${currentTabData.emp}. Veja a fluidez em 2026.</p>
-                    <div class="flex gap-2">
-                        <button onclick="switchCardTab('produtos')" class="user-theme-bg text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase flex-1 shadow-lg">Ver Produtos</button>
-                        <button class="bg-slate-100 text-slate-400 px-4 py-3 rounded-xl"><i data-lucide="share-2" class="w-4 h-4"></i></button>
-                    </div>
-                `;
-                setTimeout(initCard3D, 100);
-                lucide.createIcons();
-            } else if (tab === 'produtos') {
-                content.innerHTML = `
-                    <h3 class="text-lg font-black text-slate-900 mb-6 uppercase italic flex items-center gap-2">
-                        <i data-lucide="shopping-cart" class="w-5 h-5"></i> Vitrine de Elite
-                    </h3>
-                    <div class="product-carousel">
-                        <div class="product-card-sim">
-                            <div class="w-full aspect-video user-theme-bg text-white rounded-xl mb-4 flex items-center justify-center shadow-inner opacity-20">
-                                <i data-lucide="box" class="w-10 h-10"></i>
-                            </div>
-                            <p class="font-black text-xs text-slate-900">MÓDULO 3D ${currentTabData.emp.split(' ')[0].toUpperCase()}</p>
-                            <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold">Premium Edition</p>
-                            <button class="mt-4 w-full border-2 border-slate-100 py-2 rounded-lg text-[8px] font-black uppercase">Detalhes</button>
-                        </div>
-                        <div class="product-card-sim">
-                            <div class="w-full aspect-video user-theme-bg text-white rounded-xl mb-4 flex items-center justify-center shadow-inner opacity-20">
-                                <i data-lucide="zap" class="w-10 h-10"></i>
-                            </div>
-                            <p class="font-black text-xs text-slate-900">SISTEMA TESLA 2.0</p>
-                            <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold">Velocidade Máxima</p>
-                            <button class="mt-4 w-full border-2 border-slate-100 py-2 rounded-lg text-[8px] font-black uppercase">Detalhes</button>
-                        </div>
-                    </div>
-                `;
-                lucide.createIcons();
-            } else if (tab === 'finalizar') {
-                content.innerHTML = `
-                    <div class="text-center py-6">
-                        <div class="w-14 h-14 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-5">
-                            <i data-lucide="check-circle" class="w-8 h-8"></i>
-                        </div>
-                        <h3 class="text-xl font-black text-slate-900 mb-2 uppercase leading-tight">PROJETO CONFIGURADO</h3>
-                        
-                        <!-- MENSAGEM COM DADOS DO CLIENTE -->
-                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-8 text-left">
-                            <p class="text-[8px] font-black text-slate-400 uppercase mb-3 border-b pb-1">Resumo da Análise</p>
-                            <p class="text-[10px] text-slate-600 mb-1"><b>Proprietário:</b> ${currentTabData.name}</p>
-                            <p class="text-[10px] text-slate-600 mb-1"><b>Marca:</b> ${currentTabData.emp}</p>
-                            <p class="text-[10px] text-slate-600"><b>Identidade Visual:</b> <span class="user-theme-text font-black">${currentTabData.color}</span></p>
-                        </div>
+          <p class="font-black text-xs leading-tight" style="color:var(--mock-text)">${p.title}</p>
+          <p class="text-[9px] mt-1 uppercase font-bold tracking-wide" style="color:var(--mock-muted)">${p.sub}</p>
 
-                        <p class="text-slate-400 text-[10px] mb-6 px-4">Esta simulação foi adaptada para sua visão. Clique abaixo para ativar seu site oficial.</p>
-                        <button onclick="whatsAction()" class="user-theme-bg text-white w-full py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-[1.02] transition-transform flex items-center justify-center gap-3">
-                            <i data-lucide="send" class="w-4 h-4"></i> Ativar meu Elite 3D
-                        </button>
-                    </div>
-                `;
-                lucide.createIcons();
-            }
-        }
+          <div class="mt-auto pt-4 flex items-center gap-2">
+            <button class="flex-1 border py-2 rounded-lg text-[8px] font-black uppercase transition hover:opacity-85"
+                    style="border-color:var(--mock-border); color:var(--mock-text); background:var(--mock-panel)">
+              Detalhes
+            </button>
+            <button class="px-3 py-2 rounded-lg text-[8px] font-black uppercase text-white user-theme-bg shadow">
+              Add
+            </button>
+          </div>
+        </div>
+      `;
+    }
 
-        async function gerarAnalise() {
-            const name = document.getElementById('u-name').value || "Líder VIP";
-            const emp = document.getElementById('u-emp').value || "Minha Marca";
-            const color = document.getElementById('u-color-input').value || "Azul";
-            
-            currentTabData.name = name;
-            currentTabData.emp = emp;
-            currentTabData.color = color;
-            
-            applyUserColor(color);
-            
-            const url = `https://www.${emp.toLowerCase().replace(/\s/g, '')}.com.br`;
-            document.getElementById('url-res-box').value = url;
-            
-            const preview = document.getElementById('site-preview');
-            preview.classList.remove('hidden');
-            preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    function renderHomeTab(){
+      const content = document.getElementById("card-content");
 
-            const apiKey = "";
-            try {
-                const prompt = `Gere uma frase de marketing de impacto de 3 palavras para a empresa ${emp}. JSON: {"h1": "..."}`;
-                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
-                });
-                const data = await resp.json();
-                const res = JSON.parse(data.candidates[0].content.parts[0].text);
-                currentTabData.h1 = res.h1.toUpperCase();
-            } catch (e) {
-                currentTabData.h1 = "AUTORIDADE MÁXIMA";
-            }
-            switchCardTab('home');
-        }
+      content.innerHTML = `
+        <div class="mini-hero p-4 md:p-5 mb-5">
+          <div class="mini-grid"></div>
+          <div class="floating-chip ch1">Site 3D</div>
+          <div class="floating-chip ch2">UX Premium</div>
+          <div class="floating-chip ch3">Conversão</div>
 
-        // --- BACKGROUND 3D ---
-        const init3D = () => {
-            const container = document.getElementById('three-canvas-container');
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            container.appendChild(renderer.domElement);
+          <div class="relative z-10">
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div class="min-w-0">
+                <p class="text-[9px] font-black uppercase tracking-[.2em] truncate" style="color:var(--mock-muted)">Preview • ${currentTabData.emp}</p>
+                <h3 class="text-xl md:text-2xl font-black mt-1 leading-tight user-theme-text break-words">${currentTabData.h1}</h3>
+              </div>
 
-            const geo = new THREE.BufferGeometry();
-            const pos = [];
-            for (let i = 0; i < 4000; i++) {
-                pos.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
-            }
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({ color: 0x3b82f6, size: 2.8, transparent: true, opacity: 0.4 });
-            const points = new THREE.Points(geo, mat);
-            scene.add(points);
-            camera.position.z = 1000;
+              <div class="hidden sm:flex items-center gap-2 shrink-0">
+                <div class="w-8 h-8 rounded-xl border grid place-items-center" style="border-color:var(--mock-border); background:var(--mock-panel)">
+                  <i data-lucide="bell" class="w-4 h-4" style="color:var(--mock-muted)"></i>
+                </div>
+                <div class="w-8 h-8 rounded-xl border grid place-items-center" style="border-color:var(--mock-border); background:var(--mock-panel)">
+                  <i data-lucide="heart" class="w-4 h-4" style="color:var(--mock-muted)"></i>
+                </div>
+              </div>
+            </div>
 
-            let mouseX = 0, mouseY = 0;
-            document.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX - window.innerWidth / 2) * 0.08;
-                mouseY = (e.clientY - window.innerHeight / 2) * 0.08;
-            });
+            <div class="mini-3d-stage">
+              <div class="mini-particles">${buildMiniParticles(18)}</div>
+              <div class="scan"></div>
+              <div class="mini-orb"></div>
+              <div class="mini-cube"><i></i><i></i><i></i></div>
+            </div>
 
-            function anim() {
-                requestAnimationFrame(anim);
-                points.rotation.y += 0.0006;
-                points.rotation.x += (mouseY * 0.0001 - points.rotation.x) * 0.05;
-                points.rotation.z += (mouseX * 0.0001 - points.rotation.z) * 0.05;
-                renderer.render(scene, camera);
-            }
-            anim();
+            <div class="mini-search-wrap">
+              <div class="mini-search-glow"></div>
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 z-10" style="color:var(--mock-muted)"></i>
+              <input class="mini-search" type="text" placeholder="Buscar produtos, serviços, módulos..." />
+            </div>
 
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        };
+            <div class="grid grid-cols-3 gap-3 mt-4">
+              <div class="metric-card p-3 min-w-0">
+                <p class="text-[8px] font-black uppercase tracking-widest truncate" style="color:var(--mock-muted)">Velocidade</p>
+                <p class="text-sm font-black mt-1 user-theme-text truncate">98%</p>
+              </div>
+              <div class="metric-card p-3 min-w-0">
+                <p class="text-[8px] font-black uppercase tracking-widest truncate" style="color:var(--mock-muted)">Impacto</p>
+                <p class="text-sm font-black mt-1 user-theme-text truncate">Elite</p>
+              </div>
+              <div class="metric-card p-3 min-w-0">
+                <p class="text-[8px] font-black uppercase tracking-widest truncate" style="color:var(--mock-muted)">Visual</p>
+                <p class="text-sm font-black mt-1 user-theme-text truncate">2026</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        const photoCard = document.getElementById('photo-card');
-        document.addEventListener('mousemove', (e) => {
-            if(!photoCard) return;
-            const rect = photoCard.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = (y - centerY) / 15;
-            const rotateY = (centerX - x) / 15;
-            photoCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        <div class="mini-panel p-4 mb-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+            <div class="min-w-0">
+              <p class="text-[9px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Dashboard</p>
+              <p class="text-[12px] font-black truncate" style="color:var(--mock-text)">Performance do Site</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="status-pill" style="color: var(--user-color); border-color: rgba(59,130,246,.25); background: rgba(59,130,246,.06)">LIVE</span>
+              <i data-lucide="activity" class="w-4 h-4 user-theme-text"></i>
+            </div>
+          </div>
+
+          <div class="fake-chart mb-3">${buildFakeChartSvg()}</div>
+
+          <div class="mock-segment" id="mock-filter-segment">
+            <button class="active" data-k="vendas">Vendas</button>
+            <button data-k="visitas">Visitas</button>
+            <button data-k="engajamento">Engajamento</button>
+            <button data-k="leads">Leads</button>
+          </div>
+        </div>
+
+        <div class="mini-panel p-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+            <p class="text-[10px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Seções do Site</p>
+            <button onclick="switchCardTab('produtos')" class="text-[9px] font-black uppercase user-theme-text text-left sm:text-right">Ver Produtos →</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="rounded-xl p-3 border min-w-0" style="border-color:var(--mock-border); background:var(--mock-panel)">
+              <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 user-theme-text shrink-0"></i>
+                <p class="text-[10px] font-black uppercase truncate" style="color:var(--mock-text)">Home</p>
+              </div>
+              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">Hero, CTA, busca, visual dinâmico e métricas.</p>
+            </div>
+
+            <div class="rounded-xl p-3 border min-w-0" style="border-color:var(--mock-border); background:var(--mock-panel)">
+              <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="shopping-bag" class="w-4 h-4 user-theme-text shrink-0"></i>
+                <p class="text-[10px] font-black uppercase truncate" style="color:var(--mock-text)">Produtos</p>
+              </div>
+              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">2 fileiras de carrosséis com cards premium e CTA.</p>
+            </div>
+
+            <div class="rounded-xl p-3 border min-w-0" style="border-color:var(--mock-border); background:var(--mock-panel)">
+              <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="bot" class="w-4 h-4 user-theme-text shrink-0"></i>
+                <p class="text-[10px] font-black uppercase truncate" style="color:var(--mock-text)">Assistente</p>
+              </div>
+              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">Chat + narração por voz (se disponível no navegador).</p>
+            </div>
+
+            <div class="rounded-xl p-3 border min-w-0" style="border-color:var(--mock-border); background:var(--mock-panel)">
+              <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="check-circle-2" class="w-4 h-4 user-theme-text shrink-0"></i>
+                <p class="text-[10px] font-black uppercase truncate" style="color:var(--mock-text)">Finalização</p>
+              </div>
+              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">Resumo configurado com CTA para WhatsApp.</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      refreshIcons();
+
+      const seg = document.getElementById("mock-filter-segment");
+      if(seg){
+        seg.querySelectorAll("button").forEach(btn => {
+          btn.addEventListener("click", () => {
+            seg.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+          }, { passive:true });
         });
+      }
+    }
 
-        photoCard.addEventListener('mouseleave', () => {
-            photoCard.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+    function renderProductsTab(){
+      const content = document.getElementById("card-content");
+      const products = currentTabData.products.length ? currentTabData.products : generateProducts(currentTabData.emp);
+      const firstRow = products.slice(0, 4);
+      const secondRow = products.slice(4, 8);
+
+      content.innerHTML = `
+        <div class="mini-panel p-4 mb-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-[9px] font-black uppercase tracking-[.2em]" style="color:var(--mock-muted)">Catálogo Dinâmico</p>
+              <h3 class="text-lg font-black uppercase italic mt-1 leading-tight break-words" style="color:var(--mock-text)">
+                Produtos da <span class="user-theme-text">${currentTabData.emp}</span>
+              </h3>
+            </div>
+            <div class="w-10 h-10 rounded-2xl user-theme-bg-soft border grid place-items-center shrink-0" style="border-color:var(--mock-border)">
+              <i data-lucide="sparkles" class="w-5 h-5 user-theme-text"></i>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
+            <div class="metric-card p-2 text-center min-w-0">
+              <p class="text-[8px] font-black uppercase tracking-widest truncate" style="color:var(--mock-muted)">Cards</p>
+              <p class="text-xs font-black mt-1 truncate" style="color:var(--mock-text)">${products.length}</p>
+            </div>
+            <div class="metric-card p-2 text-center min-w-0">
+              <p class="text-[8px] font-black uppercase tracking-widest truncate" style="color:var(--mock-muted)">Fileiras</p>
+              <p class="text-xs font-black mt-1 truncate" style="color:var(--mock-text)">2</p>
+            </div>
+            <div class="metric-card p-2 text-center min-w-0">
+              <p class="text-[8px] font-black uppercase tracking-widest truncate" style="color:var(--mock-muted)">Estilo</p>
+              <p class="text-xs font-black mt-1 user-theme-text truncate">3D</p>
+            </div>
+            <div class="metric-card p-2 text-center min-w-0">
+              <p class="text-[8px] font-black uppercase tracking-widest truncate" style="color:var(--mock-muted)">Visual</p>
+              <p class="text-xs font-black mt-1 truncate" style="color:var(--mock-text)">Elite</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-3 gap-3">
+            <h4 class="text-[10px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Destaques Premium</h4>
+            <span class="text-[9px] font-black uppercase user-theme-text shrink-0">Fila 1</span>
+          </div>
+          <div class="product-carousel">
+            ${firstRow.map(buildProductCard).join("")}
+          </div>
+        </div>
+
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-3 gap-3">
+            <h4 class="text-[10px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Recursos Extras</h4>
+            <span class="text-[9px] font-black uppercase user-theme-text shrink-0">Fila 2</span>
+          </div>
+          <div class="product-carousel">
+            ${secondRow.map(buildProductCard).join("")}
+          </div>
+        </div>
+
+        <div class="mini-panel p-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-[9px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Resumo de Estrutura</p>
+              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">Layout com duas fileiras de carrosséis, visual premium e CTA de conversão.</p>
+            </div>
+            <button onclick="switchCardTab('finalizar')" class="user-theme-bg text-white px-4 py-3 rounded-xl font-black text-[9px] uppercase shadow hover:scale-105 transition shrink-0">
+              Finalizar
+            </button>
+          </div>
+        </div>
+      `;
+      refreshIcons();
+    }
+
+    function renderFinalizarTab(){
+      const content = document.getElementById("card-content");
+
+      content.innerHTML = `
+        <div class="text-center py-1">
+          <div class="w-14 h-14 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-100 shadow-sm">
+            <i data-lucide="check-circle" class="w-8 h-8"></i>
+          </div>
+
+          <h3 class="text-xl font-black mb-1 uppercase leading-tight" style="color:var(--mock-text)">Projeto Configurado</h3>
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-5" style="color:var(--mock-muted)">
+            Esboço dinâmico pronto para produção
+          </p>
+        </div>
+
+        <div class="mini-panel p-4 mb-4 text-left">
+          <p class="text-[8px] font-black uppercase mb-3 border-b pb-2 tracking-widest"
+             style="color:var(--mock-muted); border-color:var(--mock-border)">
+             Resumo da Análise
+          </p>
+
+          <div class="space-y-2">
+            <div class="summary-item">
+              <span class="text-[10px] font-bold" style="color:var(--mock-muted)">Proprietário</span>
+              <span class="text-[10px] font-black" style="color:var(--mock-text)">${currentTabData.name}</span>
+            </div>
+            <div class="summary-item">
+              <span class="text-[10px] font-bold" style="color:var(--mock-muted)">Marca</span>
+              <span class="text-[10px] font-black" style="color:var(--mock-text)">${currentTabData.emp}</span>
+            </div>
+            <div class="summary-item">
+              <span class="text-[10px] font-bold" style="color:var(--mock-muted)">Identidade Visual</span>
+              <span class="text-[10px] font-black user-theme-text">${currentTabData.color}</span>
+            </div>
+            <div class="summary-item">
+              <span class="text-[10px] font-bold" style="color:var(--mock-muted)">Estrutura</span>
+              <span class="text-[10px] font-black" style="color:var(--mock-text)">Home + Produtos + Finalização</span>
+            </div>
+            <div class="summary-item">
+              <span class="text-[10px] font-bold" style="color:var(--mock-muted)">URL</span>
+              <span class="text-[10px] font-black" style="color:var(--mock-text)">${safeBrandUrl(currentTabData.emp)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini-panel p-4 mb-4">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl user-theme-bg-soft border grid place-items-center shrink-0" style="border-color:var(--mock-border)">
+              <i data-lucide="bot" class="w-4 h-4 user-theme-text"></i>
+            </div>
+            <div class="min-w-0">
+              <p class="text-[9px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Assistente Integrado</p>
+              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">
+                Chat + botão para WhatsApp com mensagem pronta.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="whatsAction()" class="user-theme-bg text-white w-full py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-[1.02] transition-transform flex items-center justify-center gap-3">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          Ativar meu Elite 3D
+        </button>
+      `;
+      refreshIcons();
+    }
+
+    function setTabActive(tab){
+      currentTabData.activeTab = tab;
+      document.querySelectorAll(".card-tab").forEach(el => el.classList.remove("active"));
+      const target = document.getElementById(`tab-${tab}`);
+      if(target) target.classList.add("active");
+    }
+
+    function tabDirection(from, to){
+      const a = tabOrder.indexOf(from), b = tabOrder.indexOf(to);
+      return b > a ? "right" : "left";
+    }
+
+    function renderTab(tab){
+      if(tab === "home") return renderHomeTab();
+      if(tab === "produtos") return renderProductsTab();
+      if(tab === "finalizar") return renderFinalizarTab();
+    }
+
+    function mockNarrate(tab){
+      if(!mockVoiceEnabled || !globalVoiceEnabled) return;
+      const map = {
+        home: "Aba home. Apresentação principal, busca e painel de métricas.",
+        produtos: "Aba produtos. Duas fileiras de carrosséis com cards de vitrine.",
+        finalizar: "Aba finalizar. Resumo da análise e botão para WhatsApp."
+      };
+      if(map[tab]) speakText(map[tab], { rate:1.02, pitch:1.08 });
+    }
+
+    function animateTabSwitch(toTab, force=false){
+      const content = document.getElementById("card-content");
+      const fromTab = currentTabData.activeTab || "home";
+
+      if(force){
+        setTabActive(toTab);
+        content.classList.remove("tab-out-left","tab-out-right");
+        renderTab(toTab);
+        mockNarrate(toTab);
+        return;
+      }
+
+      const dir = tabDirection(fromTab, toTab);
+      content.classList.remove("tab-out-left","tab-out-right");
+      content.classList.add(dir === "right" ? "tab-out-left" : "tab-out-right");
+
+      setTimeout(() => {
+        setTabActive(toTab);
+        content.classList.remove("tab-out-left","tab-out-right");
+        renderTab(toTab);
+        mockNarrate(toTab);
+      }, 170);
+    }
+
+    function switchCardTab(tab, force=false){
+      animateTabSwitch(tab, force);
+    }
+
+    /* =========================================
+       WhatsApp (mensagem pronta)
+    ========================================= */
+    const AI_WHATS = "5533984684394";
+    let aiLastUserText = "";
+
+    function buildWhatsMsg(extra=""){
+      const emp = (currentTabData.emp && currentTabData.emp !== "SUA MARCA") ? currentTabData.emp : "";
+      const name = (currentTabData.name && currentTabData.name !== "CLIENTE") ? currentTabData.name : "";
+      const color = (currentTabData.color && currentTabData.color !== "Azul") ? currentTabData.color : "";
+
+      let msg = "Olá Atos! Vim pelo seu site e quero um orçamento.";
+      if(name) msg += ` Meu nome é ${name}.`;
+      if(emp) msg += ` Minha marca é ${emp}.`;
+      if(color) msg += ` Cor/identidade: ${color}.`;
+      if(aiLastUserText) msg += ` Dúvida: "${aiLastUserText}".`;
+      if(extra) msg += ` ${extra}`;
+      return msg;
+    }
+
+    function openWhatsFromBot(extra=""){
+      const msg = encodeURIComponent(buildWhatsMsg(extra));
+      window.open(`https://wa.me/${AI_WHATS}?text=${msg}`, "_blank");
+    }
+
+    function whatsAction(){
+      // mantém o botão do mockup finalização
+      openWhatsFromBot("Gostei da simulação. Vamos fechar?");
+    }
+
+    /* =========================================
+       Gerar simulação
+    ========================================= */
+    async function gerarAnalise(){
+      const name = document.getElementById("u-name").value || "Cliente";
+      const emp  = document.getElementById("u-emp").value || "Minha Marca";
+      const color= document.getElementById("u-color-input").value || "Azul";
+
+      currentTabData.name = name;
+      currentTabData.emp = emp;
+      currentTabData.color = color;
+      currentTabData.products = generateProducts(emp);
+      currentTabData.h1 = createDynamicHeadline(emp);
+
+      applyUserColor(color);
+
+      const preview = document.getElementById("site-preview");
+      preview.classList.remove("hidden");
+      preview.scrollIntoView({ behavior:"smooth", block:"center" });
+
+      const urlBox = document.getElementById("url-res-box");
+      if(urlBox) urlBox.value = safeBrandUrl(emp);
+
+      showMockLoading(true);
+      await new Promise(r => setTimeout(r, 420));
+      showMockLoading(false);
+
+      switchCardTab("home", true);
+      applyMockTheme();
+      refreshIcons();
+
+      // dá uma mensagem no assistente (e sem “mensagenzinha” flutuante)
+      aiAddMessage("bot", `Simulação pronta para "${emp}" (${color}). Quer que eu te explique Home, Produtos ou Finalização?`);
+    }
+
+    /* =========================================
+       MODO ESCURO MOCKUP + ÁUDIO MOCKUP
+    ========================================= */
+    function applyMockTheme(){
+      const root = document.getElementById("mockup-root");
+      if(!root) return;
+      root.classList.toggle("mock-dark", !!currentTabData.mockDark);
+    }
+
+    function initMockControls(){
+      const themeBtn = document.getElementById("mock-theme-toggle");
+      const voiceBtn = document.getElementById("mock-voice-toggle");
+      if(themeBtn){
+        themeBtn.addEventListener("click", () => {
+          currentTabData.mockDark = !currentTabData.mockDark;
+          applyMockTheme();
+          themeBtn.innerHTML = currentTabData.mockDark
+            ? `<i data-lucide="sun" class="w-4 h-4"></i>`
+            : `<i data-lucide="moon-star" class="w-4 h-4"></i>`;
+          refreshIcons();
+          switchCardTab(currentTabData.activeTab || "home", true);
+        }, { passive:true });
+      }
+
+      if(voiceBtn){
+        voiceBtn.addEventListener("click", () => {
+          mockVoiceEnabled = !mockVoiceEnabled;
+          voiceBtn.innerHTML = mockVoiceEnabled
+            ? `<i data-lucide="volume-2" class="w-4 h-4"></i>`
+            : `<i data-lucide="volume-x" class="w-4 h-4"></i>`;
+          refreshIcons();
+          if(mockVoiceEnabled) speakText("Áudio do mockup ativado.");
+        }, { passive:true });
+      }
+    }
+
+    /* =========================================
+       FUNDO 3D GLOBAL (leve)
+    ========================================= */
+    let bg3D = { renderer:null, scene:null, camera:null, points:null, ring:null, raf:null, running:false, animate:null };
+    let bgMouseX = 0, bgMouseY = 0;
+
+    function stopBg3D(){
+      bg3D.running = false;
+      if(bg3D.raf) cancelAnimationFrame(bg3D.raf);
+      bg3D.raf = null;
+    }
+
+    function resumeBg3D(){
+      if(bg3D.renderer && bg3D.animate && !bg3D.running){
+        bg3D.running = true;
+        bg3D.animate();
+      }
+    }
+
+    function init3DBackground(){
+      const container = document.getElementById("three-canvas-container");
+      if(!container) return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+      const renderer = new THREE.WebGLRenderer({ alpha:true, antialias:true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      const geo = new THREE.BufferGeometry();
+      const pos = [];
+      const colors = [];
+      const COUNT = 1600;
+      for(let i=0;i<COUNT;i++){
+        pos.push(
+          THREE.MathUtils.randFloatSpread(1800),
+          THREE.MathUtils.randFloatSpread(1200),
+          THREE.MathUtils.randFloatSpread(1500)
+        );
+        const t = Math.random();
+        colors.push(0.15 + t*0.25, 0.35 + t*0.3, 0.78 + t*0.18);
+      }
+      geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+
+      const mat = new THREE.PointsMaterial({
+        size:2,
+        transparent:true,
+        opacity:.34,
+        vertexColors:true
+      });
+      const points = new THREE.Points(geo, mat);
+      scene.add(points);
+
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(380, 1, 8, 180),
+        new THREE.MeshBasicMaterial({ color:0x3b82f6, transparent:true, opacity:.06 })
+      );
+      ring.rotation.x = Math.PI / 2.5;
+      ring.position.z = -120;
+      scene.add(ring);
+
+      camera.position.z = 820;
+      bg3D = { renderer, scene, camera, points, ring, raf:null, running:true, animate:null };
+
+      function anim(){
+        if(!bg3D.running) return;
+        bg3D.raf = requestAnimationFrame(anim);
+
+        points.rotation.y += 0.00032;
+        points.rotation.x += (bgMouseY * 0.00005 - points.rotation.x) * 0.03;
+        points.rotation.z += (bgMouseX * 0.00005 - points.rotation.z) * 0.03;
+        ring.rotation.z += 0.00035;
+
+        renderer.render(scene, camera);
+      }
+
+      bg3D.animate = anim;
+      anim();
+
+      window.addEventListener("resize", () => {
+        if(!bg3D.renderer) return;
+        bg3D.camera.aspect = window.innerWidth / window.innerHeight;
+        bg3D.camera.updateProjectionMatrix();
+        bg3D.renderer.setSize(window.innerWidth, window.innerHeight);
+      }, { passive:true });
+    }
+
+    function initGlobalCssParticles(){
+      const wrap = document.getElementById("global-particles");
+      if(!wrap) return;
+      wrap.innerHTML = "";
+      const total = 28;
+      for(let i=0;i<total;i++){
+        const p = document.createElement("span");
+        const s = (1.4 + Math.random()*2).toFixed(1);
+        p.style.width = s + "px";
+        p.style.height = s + "px";
+        p.style.left = Math.random()*100 + "vw";
+        p.style.top = Math.random()*100 + "vh";
+        p.style.animationDuration = (7 + Math.random()*9).toFixed(2) + "s";
+        p.style.animationDelay = (Math.random()*-10).toFixed(2) + "s";
+        wrap.appendChild(p);
+      }
+    }
+
+    /* =========================================
+       MOUSE LIGHT + FOTO 3D
+    ========================================= */
+    const mouseLight = document.getElementById("mouse-light");
+    let mlX = 0, mlY = 0, mouseLightRAF = null;
+
+    document.addEventListener("mousemove", (e) => {
+      mlX = e.clientX;
+      mlY = e.clientY;
+
+      bgMouseX = (e.clientX - window.innerWidth/2) * 0.08;
+      bgMouseY = (e.clientY - window.innerHeight/2) * 0.08;
+
+      if(!mouseLight || mouseLightRAF) return;
+      mouseLightRAF = requestAnimationFrame(() => {
+        mouseLight.style.transform = `translate3d(${mlX - 120}px, ${mlY - 120}px, 0)`;
+        mouseLightRAF = null;
+      });
+    }, { passive:true });
+
+    const photoCard = document.getElementById("photo-card");
+    let heroInView = true;
+    let photoTiltRAF = null;
+    let photoTargetX = 0, photoTargetY = 0;
+
+    function updatePhotoTilt(){
+      photoTiltRAF = null;
+      if(!photoCard || !heroInView || document.body.classList.contains("simulator-focus")) return;
+
+      const rect = photoCard.getBoundingClientRect();
+      const x = photoTargetX - rect.left;
+      const y = photoTargetY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const rx = (y - cy) / 20;
+      const ry = (cx - x) / 20;
+      photoCard.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(1.01)`;
+    }
+
+    document.addEventListener("mousemove", (e) => {
+      if(!photoCard || !heroInView || document.body.classList.contains("simulator-focus")) return;
+      photoTargetX = e.clientX;
+      photoTargetY = e.clientY;
+      if(photoTiltRAF) return;
+      photoTiltRAF = requestAnimationFrame(updatePhotoTilt);
+    }, { passive:true });
+
+    if(photoCard){
+      photoCard.addEventListener("mouseleave", () => {
+        photoCard.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+      });
+    }
+
+    /* =========================================
+       OBSERVERS / FOCUS MODE
+    ========================================= */
+    function setSimulatorFocusMode(active){
+      document.body.classList.toggle("simulator-focus", !!active);
+      if(active) stopBg3D(); else resumeBg3D();
+    }
+
+    function initObservers(){
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting) entry.target.classList.add("active");
         });
+      }, { threshold: 0.12 });
+      document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
 
-        window.onload = () => {
-            init3D();
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('active');
-                });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-        };
-    </script>
+      const hero = document.getElementById("hero");
+      if(hero){
+        const heroObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            heroInView = entry.isIntersecting;
+            if(entry.isIntersecting) narrateSection("hero");
+            if(!heroInView && photoCard){
+              photoCard.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+            }
+          });
+        }, { threshold: 0.2 });
+        heroObserver.observe(hero);
+      }
+
+      ["sobre","ecossistema","simulador"].forEach(id => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        const o = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting) narrateSection(id);
+            if(id === "simulador") setSimulatorFocusMode(entry.isIntersecting);
+          });
+        }, { threshold: 0.22 });
+        o.observe(el);
+      });
+    }
+
+    /* =========================================
+       ASSISTENTE (chat + botão WhatsApp)
+    ========================================= */
+    let aiOpenedOnce = false;
+    let aiWelcomeSent = false;
+
+    function aiRefs(){
+      return {
+        panel: document.getElementById("ai-panel"),
+        openBtn: document.getElementById("ai-open"),
+        closeBtn: document.getElementById("ai-close"),
+        msgs: document.getElementById("ai-messages"),
+        input: document.getElementById("ai-input"),
+        send: document.getElementById("ai-send"),
+        clear: document.getElementById("ai-clear"),
+        quick: document.getElementById("ai-quick"),
+        voiceToggle: document.getElementById("ai-voice-toggle"),
+        whatsBig: document.getElementById("ai-whats-big"),
+      };
+    }
+
+    function aiScrollBottom(){
+      const { msgs } = aiRefs();
+      if(msgs) msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function escapeHTML(s){
+      return (s || "").replace(/[&<>"']/g, (m) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    function aiAddMessage(type, text){
+      const { msgs } = aiRefs();
+      if(!msgs) return;
+
+      const div = document.createElement("div");
+      div.className = `ai-msg ${type}`;
+
+      if(type === "user"){
+        div.textContent = text;
+        msgs.appendChild(div);
+        aiScrollBottom();
+        return;
+      }
+
+      // Bot: texto + botões (WhatsApp de verdade)
+      const safe = escapeHTML(text);
+      div.innerHTML = `
+        <div>${safe}</div>
+        <small>Assistente • pode te encaminhar pro WhatsApp com mensagem pronta</small>
+        <div class="ai-actions">
+          <button class="primary" type="button" data-act="whats">WhatsApp agora</button>
+          <button type="button" data-act="simulador">Ir pro simulador</button>
+        </div>
+      `;
+      msgs.appendChild(div);
+
+      div.querySelector('[data-act="whats"]')?.addEventListener("click", () => openWhatsFromBot("Quero atendimento e orçamento, por favor."), { passive:true });
+      div.querySelector('[data-act="simulador"]')?.addEventListener("click", () => {
+        document.getElementById("simulador")?.scrollIntoView({ behavior:"smooth" });
+        closeAiPanel();
+      }, { passive:true });
+
+      aiScrollBottom();
+    }
+
+    function aiTypingThenReply(text){
+      const { msgs } = aiRefs();
+      if(!msgs) return;
+
+      const typing = document.createElement("div");
+      typing.className = "ai-msg bot";
+      typing.textContent = "Digitando...";
+      msgs.appendChild(typing);
+      aiScrollBottom();
+
+      setTimeout(() => {
+        typing.remove();
+        aiAddMessage("bot", text);
+      }, 520);
+    }
+
+    function aiGetReply(input){
+      const q = (input || "").toLowerCase();
+
+      if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(q)){
+        return "Boas-vindas! Eu posso te explicar os serviços, o simulador e como seria seu site 3D.";
+      }
+      if(/site 3d|3d|imersiv/.test(q)){
+        return "O site 3D entrega uma experiência visual premium, com elementos dinâmicos, sensação de profundidade e vitrine interativa.";
+      }
+      if(/servi[cç]o|oferece|faz/.test(q)){
+        return "Atos oferece sites imersivos 3D, sites institucionais estratégicos, pacotes de imagens premium e posicionamento digital.";
+      }
+      if(/simula|simulador|prot[oó]tipo/.test(q)){
+        return "No simulador você preenche nome, marca e cor. O card gera um esboço de site com Home, Produtos e Finalização.";
+      }
+      if(/valor|pre[cç]o|quanto|or[cç]amento|prazo/.test(q)){
+        return "Valor e prazo variam conforme o escopo. Me diga seu tipo de negócio e objetivo que eu te encaminho pro WhatsApp com uma mensagem pronta.";
+      }
+      if(/whatsapp|contato|falar/.test(q)){
+        return "Fechado. Clique em “WhatsApp agora” aqui no chat e já vai com mensagem pronta.";
+      }
+      if(/voz|audio|narra/.test(q)){
+        return "A narração depende do navegador ter voz pt-BR disponível. Se tiver, eu posso guiar as seções do site com voz mais natural.";
+      }
+
+      return "Entendi. Me fala qual é seu tipo de negócio e o que você quer vender (serviço/produto), que eu te direciono certinho.";
+    }
+
+    function openAiPanel(forceGreet=false){
+      const { panel, input } = aiRefs();
+      if(!panel) return;
+      panel.classList.add("open");
+
+      if(!aiWelcomeSent || forceGreet){
+        aiWelcomeSent = true;
+        aiAddMessage("bot", "Boas-vindas! Eu sou o assistente do site. Me diga sua dúvida e eu te ajudo.");
+        if(globalVoiceEnabled) speakText("Boas-vindas! Quer que eu te ajude com serviços, simulação ou orçamento?");
+      }
+
+      setTimeout(() => input && input.focus(), 50);
+      aiOpenedOnce = true;
+    }
+
+    function closeAiPanel(){
+      const { panel } = aiRefs();
+      if(!panel) return;
+      panel.classList.remove("open");
+    }
+
+    function sendAiMessage(customText=null){
+      const { input } = aiRefs();
+      const value = (customText ?? (input ? input.value : "")).trim();
+      if(!value) return;
+
+      aiLastUserText = value; // usado na mensagem pronta pro WhatsApp
+
+      aiAddMessage("user", value);
+      if(input && customText === null) input.value = "";
+
+      const reply = aiGetReply(value);
+      aiTypingThenReply(reply);
+    }
+
+    function initAiAssistant(){
+      const r = aiRefs();
+      if(!r.panel) return;
+
+      r.openBtn?.addEventListener("click", () => openAiPanel(), { passive:true });
+      r.closeBtn?.addEventListener("click", closeAiPanel, { passive:true });
+      r.send?.addEventListener("click", () => sendAiMessage(), { passive:true });
+
+      r.input?.addEventListener("keydown", (e) => {
+        if(e.key === "Enter"){
+          e.preventDefault();
+          sendAiMessage();
+        }
+      });
+
+      r.clear?.addEventListener("click", () => {
+        if(r.msgs) r.msgs.innerHTML = "";
+        aiWelcomeSent = false;
+        openAiPanel(true);
+      }, { passive:true });
+
+      r.quick?.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          openAiPanel();
+          sendAiMessage(btn.dataset.q || btn.textContent || "");
+        }, { passive:true });
+      });
+
+      r.voiceToggle?.addEventListener("click", () => {
+        globalVoiceEnabled = !globalVoiceEnabled;
+        r.voiceToggle.innerHTML = globalVoiceEnabled
+          ? `<i data-lucide="volume-2" class="w-4 h-4"></i>`
+          : `<i data-lucide="volume-x" class="w-4 h-4"></i>`;
+        refreshIcons();
+        if(globalVoiceEnabled) speakText("Narração ativada.");
+        else if("speechSynthesis" in window) window.speechSynthesis.cancel();
+      }, { passive:true });
+
+      r.whatsBig?.addEventListener("click", () => openWhatsFromBot("Quero falar com você pelo WhatsApp."), { passive:true });
+    }
+
+    /* =========================================
+       INIT
+    ========================================= */
+    window.onload = () => {
+      applyUserColor("Azul");
+      init3DBackground();
+      initGlobalCssParticles();
+      initObservers();
+      initMockControls();
+      initAiAssistant();
+      applyMockTheme();
+
+      switchCardTab("home", true);
+      refreshIcons();
+
+      // pausa animação se aba ficar em background
+      document.addEventListener("visibilitychange", () => {
+        if(document.hidden) stopBg3D();
+        else if(!document.body.classList.contains("simulator-focus")) resumeBg3D();
+      });
+
+      // garante carregamento de vozes em alguns navegadores
+      if("speechSynthesis" in window){
+        window.speechSynthesis.onvoiceschanged = () => {};
+      }
+    };
+  </script>
 </body>
 </html>
