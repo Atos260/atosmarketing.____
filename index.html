@@ -16,7 +16,6 @@
 
   <style>
     :root{
-      /* Blues */
       --blue-50:#eff6ff;
       --blue-100:#dbeafe;
       --blue-200:#bfdbfe;
@@ -30,8 +29,6 @@
       --cyan-400:#22d3ee;
       --sky-400:#38bdf8;
       --indigo-400:#818cf8;
-
-      --tesla-dark:#020617;
 
       --user-color:#3b82f6;
       --user-color-soft:rgba(59,130,246,.14);
@@ -659,6 +656,7 @@
       border:1px solid var(--mock-border);
       background:var(--mock-panel); color:var(--mock-muted);
       transition:.2s ease;
+      cursor:pointer;
     }
     .mock-segment button.active{
       color:#fff; background:var(--user-color); border-color:transparent;
@@ -724,7 +722,7 @@
       background-size:180% 100%;
     }
 
-    /* ===== PATCH PERFORMANCE no simulador ===== */
+    /* ===== Patch performance no simulador ===== */
     #simulador .glass,
     #simulador .glass-strong{
       backdrop-filter:none !important;
@@ -746,341 +744,6 @@
       transition-duration:.12s !important;
     }
 
-    /* ===== Assistente IA flutuante (SEM “mensagenzinha”) ===== */
-    .ai-assistant{
-      position:fixed;
-      right:20px;
-      bottom:98px; /* acima do whatsapp */
-      z-index:9998;
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap:10px;
-      max-width:min(92vw, 380px);
-    }
-
-    /* Botão bolinha */
-    .ai-bubble-btn{
-      width:66px; height:66px; border-radius:18px;
-      border:1px solid rgba(255,255,255,.18);
-      background:
-        radial-gradient(circle at 25% 20%, rgba(255,255,255,.16), transparent 40%),
-        linear-gradient(135deg, #1e3a8a, #2563eb, #38bdf8);
-      box-shadow:0 12px 26px rgba(37,99,235,.35), inset 0 1px 0 rgba(255,255,255,.18);
-      display:grid; place-items:center;
-      cursor:pointer;
-      transition:.25s ease;
-      position:relative;
-      overflow:hidden;
-    }
-    .ai-bubble-btn:hover{ transform:translateY(-2px) scale(1.03); }
-    .ai-bubble-btn::after{
-      content:"";
-      position:absolute; inset:-40%;
-      background:linear-gradient(120deg, transparent 35%, rgba(255,255,255,.2), transparent 65%);
-      transform:translateX(-120%) rotate(10deg);
-      animation:shimmer 4.4s ease infinite;
-      pointer-events:none;
-    }
-
-    /* “Personagem” do robô (gesticulando) */
-    .ai-avatar{
-      width:30px; height:30px;
-      border-radius:10px;
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.18);
-      position:relative;
-      box-shadow:0 10px 18px rgba(2,6,23,.22), inset 0 1px 0 rgba(255,255,255,.15);
-      animation:botBounce 2.4s ease-in-out infinite;
-    }
-    @keyframes botBounce{
-      0%,100%{ transform:translateY(0); }
-      50%{ transform:translateY(-2px); }
-    }
-    .ai-avatar .eye{
-      position:absolute; top:10px;
-      width:6px; height:6px; border-radius:999px;
-      background:#dbeafe;
-      box-shadow:0 0 12px rgba(96,165,250,.45);
-      animation:botBlink 4.2s ease-in-out infinite;
-    }
-    .ai-avatar .eye.e1{ left:9px; }
-    .ai-avatar .eye.e2{ right:9px; }
-    @keyframes botBlink{
-      0%,6%,100%{ transform:scaleY(1); }
-      3%{ transform:scaleY(.15); }
-    }
-    .ai-avatar .mouth{
-      position:absolute; left:50%; top:19px;
-      width:14px; height:4px;
-      transform:translateX(-50%);
-      border-radius:999px;
-      background:rgba(191,219,254,.8);
-      opacity:.85;
-    }
-    /* antena */
-    .ai-avatar::before{
-      content:"";
-      position:absolute; left:50%; top:-7px;
-      width:10px; height:10px;
-      transform:translateX(-50%);
-      border-radius:999px;
-      background:rgba(34,211,238,.55);
-      box-shadow:0 0 16px rgba(34,211,238,.35);
-      animation:antennaPulse 1.9s ease-in-out infinite;
-    }
-    @keyframes antennaPulse{
-      0%,100%{ transform:translateX(-50%) scale(1); opacity:.9; }
-      50%{ transform:translateX(-50%) scale(1.14); opacity:1; }
-    }
-    /* “braços” gesticulando */
-    .ai-arm{
-      position:absolute; top:13px;
-      width:12px; height:6px; border-radius:999px;
-      background:rgba(255,255,255,.18);
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
-      transform-origin:center;
-      opacity:.85;
-    }
-    .ai-arm.l{ left:-8px; animation:armWaveL 1.7s ease-in-out infinite; }
-    .ai-arm.r{ right:-8px; animation:armWaveR 1.9s ease-in-out infinite; }
-    @keyframes armWaveL{
-      0%,100%{ transform:rotate(-10deg) translateY(0); }
-      50%{ transform:rotate(18deg) translateY(-1px); }
-    }
-    @keyframes armWaveR{
-      0%,100%{ transform:rotate(10deg) translateY(0); }
-      50%{ transform:rotate(-18deg) translateY(-1px); }
-    }
-
-    /* Painel do assistente */
-    .ai-panel{
-      width:min(92vw, 380px);
-      height:min(72vh, 560px);
-      border-radius:22px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.14);
-      background:
-        radial-gradient(circle at 15% 8%, rgba(59,130,246,.12), transparent 35%),
-        radial-gradient(circle at 95% 0%, rgba(34,211,238,.08), transparent 35%),
-        rgba(2,6,23,.90);
-      box-shadow:0 22px 46px rgba(2,6,23,.42), inset 0 1px 0 rgba(255,255,255,.06);
-      display:none;
-      flex-direction:column;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-    .ai-panel.open{ display:flex; }
-
-    .ai-header{
-      padding:14px 14px 12px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);
-    }
-    .ai-header-left{
-      display:flex; align-items:center; gap:10px; min-width:0;
-    }
-    .ai-mini-avatar{
-      width:38px; height:38px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.04);
-      display:grid; place-items:center;
-      position:relative;
-      box-shadow:0 10px 18px rgba(2,6,23,.25);
-      flex:0 0 auto;
-    }
-    .ai-mini-avatar .ai-avatar{ transform:scale(.9); animation:botBounce 2.4s ease-in-out infinite; }
-    .ai-header .meta{ min-width:0; }
-    .ai-header h4{
-      font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.12em;
-      color:#dbeafe; margin:0;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .ai-header p{
-      margin:2px 0 0; font-size:10px; color:#93c5fd; font-weight:700;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      display:flex; align-items:center; gap:8px;
-    }
-    .ai-online{
-      display:inline-flex; align-items:center; gap:6px;
-      font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.08em;
-      color:#bbf7d0;
-    }
-    .ai-online .dot{
-      width:7px; height:7px; border-radius:999px;
-      background:#22c55e;
-      box-shadow:0 0 12px rgba(34,197,94,.35);
-      animation:onlinePulse 1.4s ease-in-out infinite;
-    }
-    @keyframes onlinePulse{
-      0%,100%{ transform:scale(1); opacity:1; }
-      50%{ transform:scale(1.2); opacity:.8; }
-    }
-
-    .ai-tools{
-      display:flex; gap:6px; align-items:center;
-    }
-    .ai-tool-btn{
-      width:34px; height:34px; border-radius:10px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.03);
-      color:#cbd5e1; display:grid; place-items:center;
-      cursor:pointer; transition:.2s ease;
-    }
-    .ai-tool-btn:hover{ background:rgba(255,255,255,.07); color:#fff; }
-
-    .ai-messages{
-      flex:1;
-      overflow:auto;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      scroll-behavior:smooth;
-    }
-    .ai-msg{
-      max-width:90%;
-      border-radius:14px;
-      padding:10px 12px;
-      font-size:12px;
-      line-height:1.4;
-      box-shadow:0 6px 14px rgba(2,6,23,.2);
-      border:1px solid transparent;
-      white-space:pre-wrap;
-      word-wrap:break-word;
-    }
-    .ai-msg.bot{
-      align-self:flex-start;
-      background:rgba(255,255,255,.04);
-      border-color:rgba(255,255,255,.07);
-      color:#e2e8f0;
-    }
-    .ai-msg.user{
-      align-self:flex-end;
-      background:linear-gradient(135deg, rgba(59,130,246,.24), rgba(34,211,238,.18));
-      border-color:rgba(96,165,250,.18);
-      color:#eff6ff;
-    }
-    .ai-msg small{
-      display:block;
-      margin-top:6px;
-      color:#93c5fd;
-      font-weight:700;
-      font-size:10px;
-    }
-
-    .ai-actions{
-      display:flex; gap:8px;
-      margin-top:10px;
-    }
-    .ai-actions button{
-      flex:1;
-      border-radius:12px;
-      padding:10px 10px;
-      font-size:10px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      cursor:pointer;
-      transition:.2s ease;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      color:#dbeafe;
-    }
-    .ai-actions button.primary{
-      border-color:rgba(34,197,94,.25);
-      background:linear-gradient(180deg, rgba(49,229,126,.95), rgba(37,211,102,.95));
-      color:#072712;
-      box-shadow:0 10px 20px rgba(37,211,102,.18);
-    }
-    .ai-actions button:hover{ transform:translateY(-1px); }
-
-    .ai-quick{
-      display:flex;
-      gap:8px;
-      overflow:auto;
-      padding:0 12px 10px;
-      scrollbar-width:none;
-    }
-    .ai-quick::-webkit-scrollbar{ display:none; }
-    .ai-quick button{
-      flex:0 0 auto;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      color:#dbeafe;
-      padding:8px 10px;
-      font-size:10px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-    .ai-quick button:hover{
-      background:rgba(59,130,246,.16);
-      border-color:rgba(96,165,250,.22);
-    }
-
-    .ai-footer{
-      border-top:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.02);
-      padding:10px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-
-    .ai-footer-top{
-      display:flex; gap:8px; align-items:center;
-    }
-    .ai-input{
-      flex:1;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      color:#e2e8f0;
-      padding:10px 12px;
-      font-size:12px;
-      outline:none;
-    }
-    .ai-input::placeholder{ color:#93a3b8; }
-    .ai-send{
-      width:42px; height:42px; border-radius:12px;
-      border:1px solid rgba(96,165,250,.22);
-      background:linear-gradient(135deg, rgba(37,99,235,.75), rgba(59,130,246,.85));
-      color:#fff;
-      display:grid; place-items:center;
-      cursor:pointer; transition:.2s ease;
-      box-shadow:0 8px 18px rgba(37,99,235,.24);
-      flex:0 0 auto;
-    }
-    .ai-send:hover{ transform:translateY(-1px); }
-
-    .ai-whats-big{
-      width:100%;
-      border-radius:14px;
-      border:1px solid rgba(34,197,94,.25);
-      background:linear-gradient(180deg, rgba(49,229,126,.95), rgba(37,211,102,.95));
-      color:#072712;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.10em;
-      font-size:10px;
-      padding:12px 12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      cursor:pointer;
-      transition:.2s ease;
-      box-shadow:0 10px 22px rgba(37,211,102,.18);
-    }
-    .ai-whats-big:hover{ transform:translateY(-1px); }
-
-    /* mobile */
     @media (max-width: 1024px){
       .browser-mockup{ height:760px; }
     }
@@ -1089,9 +752,7 @@
       .product-card-sim{ flex:0 0 84%; min-height:228px; }
       .mini-3d-stage{ height:138px; }
       .mini-hero{ min-height:220px; }
-      .ai-assistant{ right:14px; bottom:88px; }
       .w-btn{ right:14px; bottom:14px; }
-      .ai-panel{ width:min(95vw, 380px); height:min(72vh, 540px); }
       .card-tab{ font-size:8px; padding:10px 8px; gap:4px; }
     }
   </style>
@@ -1105,78 +766,6 @@
   <div class="bg-blob blob-3"></div>
   <div class="bg-blob blob-4"></div>
   <div id="mouse-light" class="mouse-light"></div>
-
-  <!-- Assistente IA (sem mensagenzinha) -->
-  <div class="ai-assistant" id="ai-assistant">
-    <div class="ai-panel" id="ai-panel" aria-live="polite">
-      <div class="ai-header">
-        <div class="ai-header-left">
-          <div class="ai-mini-avatar" aria-hidden="true">
-            <div class="ai-avatar">
-              <span class="ai-arm l"></span>
-              <span class="ai-arm r"></span>
-              <span class="eye e1"></span>
-              <span class="eye e2"></span>
-              <span class="mouth"></span>
-            </div>
-          </div>
-          <div class="meta">
-            <h4>Assistente do Site</h4>
-            <p>
-              <span class="ai-online"><span class="dot"></span> online</span>
-              <span style="opacity:.7;">•</span>
-              <span style="opacity:.95;">Atos Miranda</span>
-            </p>
-          </div>
-        </div>
-
-        <div class="ai-tools">
-          <button class="ai-tool-btn" id="ai-voice-toggle" title="Narrar o site (voz)">
-            <i data-lucide="volume-2" class="w-4 h-4"></i>
-          </button>
-          <button class="ai-tool-btn" id="ai-clear" title="Limpar conversa">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
-          <button class="ai-tool-btn" id="ai-close" title="Fechar">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="ai-messages" id="ai-messages"></div>
-
-      <div class="ai-quick" id="ai-quick">
-        <button data-q="Quero um site 3D">Site 3D</button>
-        <button data-q="Quais serviços você oferece?">Serviços</button>
-        <button data-q="Quero uma simulação do meu site">Simulação</button>
-        <button data-q="Qual o valor e prazo?">Valor e prazo</button>
-      </div>
-
-      <div class="ai-footer">
-        <button class="ai-whats-big" id="ai-whats-big">
-          <i data-lucide="message-circle" class="w-4 h-4"></i>
-          Conversar no WhatsApp
-        </button>
-
-        <div class="ai-footer-top">
-          <input id="ai-input" class="ai-input" type="text" placeholder="Digite sua dúvida..." />
-          <button id="ai-send" class="ai-send" aria-label="Enviar">
-            <i data-lucide="send" class="w-4 h-4"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <button class="ai-bubble-btn" id="ai-open" aria-label="Abrir assistente">
-      <div class="ai-avatar" aria-hidden="true">
-        <span class="ai-arm l"></span>
-        <span class="ai-arm r"></span>
-        <span class="eye e1"></span>
-        <span class="eye e2"></span>
-        <span class="mouth"></span>
-      </div>
-    </button>
-  </div>
 
   <!-- WhatsApp -->
   <a href="https://wa.me/5533984684394" target="_blank" class="w-btn" aria-label="WhatsApp">
@@ -1200,7 +789,7 @@
   </nav>
 
   <!-- Hero -->
-  <section id="hero" class="min-h-screen flex items-center pt-24 md:pt-20 px-6 relative">
+  <section id="hero" class="min-h-[92vh] flex items-center pt-24 md:pt-20 px-6 relative">
     <div class="container mx-auto grid md:grid-cols-2 gap-10 items-center">
       <div class="reveal">
         <div class="inline-flex items-center gap-2 bg-blue-600/10 text-blue-300 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-6 border border-blue-500/20">
@@ -1214,7 +803,7 @@
         </h1>
 
         <p class="text-gray-300 text-base md:text-lg mb-8 max-w-md font-medium leading-relaxed">
-          Construindo ecossistemas de luxo que transformam marcas comuns em autoridades mundiais com design, estratégia e presença digital de alto impacto.
+          Construindo ecossistemas de luxo que transformam marcas comuns em autoridades com design, estratégia e presença digital de alto impacto.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4">
@@ -1222,17 +811,18 @@
                   class="tesla-btn px-8 py-4 rounded-xl text-[10px]">
             Gerar Meu Protótipo
           </button>
-          <button onclick="openAiPanel(true)" class="glass px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition text-center">
-            Falar com o Assistente
-          </button>
+          <a href="https://wa.me/5533984684394" target="_blank"
+             class="glass px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition text-center">
+            Falar no WhatsApp
+          </a>
         </div>
 
         <div class="flex flex-wrap gap-3 mt-8 max-w-2xl">
           <span class="blue-chip"><i data-lucide="sparkles"></i>UX Premium</span>
           <span class="blue-chip"><i data-lucide="layers-3"></i>3D Leve</span>
           <span class="blue-chip"><i data-lucide="gauge"></i>Performance</span>
-          <span class="blue-chip"><i data-lucide="bot"></i>Assistente IA</span>
           <span class="blue-chip"><i data-lucide="smartphone"></i>Mobile Ready</span>
+          <span class="blue-chip"><i data-lucide="palette"></i>Paleta Azul</span>
         </div>
 
         <div class="grid grid-cols-3 gap-3 mt-8 max-w-xl">
@@ -1251,7 +841,7 @@
         </div>
       </div>
 
-      <!-- NÃO ALTERAR LUGAR DA FOTO -->
+      <!-- FOTO -->
       <div class="photo-3d-container group reveal">
         <div id="photo-card" class="photo-3d-card relative aspect-[3/4] rounded-[50px] overflow-hidden glass-strong blue-border-glow">
           <img src="img/perfil.jpg" alt="Atos Miranda"
@@ -1283,12 +873,26 @@
             <p class="text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Fundador & Estrategista</p>
           </div>
         </div>
+
+        <!-- CTA imediato abaixo da foto para puxar atenção pro simulador -->
+        <div class="mt-4 gradient-card p-4 rounded-2xl">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-[9px] text-blue-300 font-black uppercase tracking-[.18em]">Simulador no topo</p>
+              <p class="text-sm font-bold text-white">Quer ver seu site em esboço agora?</p>
+            </div>
+            <button onclick="document.getElementById('simulador').scrollIntoView({behavior:'smooth'})"
+                    class="tesla-btn px-4 py-3 rounded-xl text-[9px] shrink-0">
+              Simular
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- faixa de paleta azul (ajustada sem “empurrar” nada) -->
-  <section class="px-6 pt-8 pb-8 relative z-10">
+  <!-- faixa de paleta azul -->
+  <section class="px-6 pt-4 pb-8 relative z-10">
     <div class="container mx-auto reveal">
       <div class="gradient-card p-4 md:p-5">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -1305,6 +909,133 @@
             <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#1d4ed8"></span>
             <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#0ea5e9"></span>
             <span class="w-10 h-10 rounded-xl border border-white/10" style="background:#22d3ee"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIMULADOR (MOVIDO PARA CIMA) -->
+  <section id="simulador" class="py-16 bg-black/35 relative">
+    <div class="container mx-auto px-6">
+      <div class="reveal mb-8">
+        <p class="text-[10px] text-blue-300 font-black uppercase tracking-[.18em] mb-3">Destaque principal</p>
+        <h2 class="text-3xl md:text-5xl font-black uppercase italic leading-tight">
+          Simule seu <span class="text-blue-400">site de elite</span> antes mesmo de falar comigo
+        </h2>
+        <p class="text-gray-300 mt-3 max-w-3xl">
+          Preencha os dados e veja um esboço dinâmico de como seu site pode ficar. Isso prende a atenção logo no início do site.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12">
+        <!-- formulário -->
+        <div class="reveal glass-strong p-8 md:p-12 rounded-[36px] border-blue-500/20 h-fit relative overflow-hidden">
+          <div class="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-blue-500/20 blur-3xl"></div>
+          <div class="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-cyan-400/10 blur-3xl"></div>
+
+          <h2 class="text-3xl font-black uppercase italic mb-8">
+            Configurador <span class="text-blue-400">Tesla</span>
+          </h2>
+
+          <div class="space-y-6 relative z-10">
+            <div>
+              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block tracking-widest">Nome do Cliente</label>
+              <input type="text" id="u-name" placeholder="Ex: João da Silva"
+                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
+            </div>
+
+            <div>
+              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block">Sua Marca</label>
+              <input type="text" id="u-emp" placeholder="Nome da Empresa"
+                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
+            </div>
+
+            <div>
+              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block">Cor Predominante (Português)</label>
+              <input type="text" id="u-color-input" placeholder="Azul, Ciano, Dourado..."
+                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
+            </div>
+
+            <div class="grid grid-cols-4 gap-2">
+              <button type="button" onclick="quickColor('Azul')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Azul</button>
+              <button type="button" onclick="quickColor('Ciano')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Ciano</button>
+              <button type="button" onclick="quickColor('Indigo')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Índigo</button>
+              <button type="button" onclick="quickColor('Dourado')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Dourado</button>
+            </div>
+
+            <button onclick="gerarAnalise()" class="w-full tesla-btn py-6 rounded-2xl text-[10px] mt-4 uppercase">
+              Simular Projeto em Tempo Real
+            </button>
+
+            <div class="gradient-card p-4 rounded-2xl">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-300/20 grid place-items-center shrink-0">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-blue-300"></i>
+                </div>
+                <div>
+                  <p class="text-[10px] font-black uppercase tracking-widest text-blue-300">Dica</p>
+                  <p class="text-sm text-gray-300">
+                    Preencha os campos e veja o card virar um esboço de site completo com home, produtos e finalização.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">
+              O card ao lado vira o esboço do site com seus dados
+            </p>
+          </div>
+        </div>
+
+        <!-- mockup -->
+        <div id="site-preview" class="hidden reveal">
+          <div id="mockup-root" class="browser-mockup">
+            <div id="mock-loading" class="mock-loading">
+              <div class="spinner"></div>
+              <div class="skeleton"></div>
+              <div class="skeleton" style="width:58%"></div>
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Gerando preview...</p>
+            </div>
+
+            <!-- browser bar -->
+            <div class="bg-gray-100 px-4 py-3 flex items-center gap-3 border-b relative z-10">
+              <div class="flex gap-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+              </div>
+
+              <div class="flex-1 relative min-w-0">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <i data-lucide="search" class="w-3 h-3"></i>
+                </div>
+                <input type="text" id="url-res-box" value="https://www.marca.com.br"
+                       class="w-full bg-white rounded-lg py-1.5 pl-8 pr-4 text-[9px] text-gray-500 outline-none border border-slate-200">
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <button id="mock-theme-toggle" class="text-slate-400 hover:text-slate-600 transition" title="Modo noturno">
+                  <i data-lucide="moon-star" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- tabs -->
+            <div class="bg-white border-b flex justify-around relative z-10">
+              <div onclick="switchCardTab('home')" id="tab-home" class="card-tab active">
+                <i data-lucide="house" class="w-3 h-3"></i> Home
+              </div>
+              <div onclick="switchCardTab('produtos')" id="tab-produtos" class="card-tab">
+                <i data-lucide="shopping-bag" class="w-3 h-3"></i> Produtos
+              </div>
+              <div onclick="switchCardTab('finalizar')" id="tab-finalizar" class="card-tab">
+                <i data-lucide="check-circle-2" class="w-3 h-3"></i> Finalizar
+              </div>
+            </div>
+
+            <!-- content -->
+            <div id="card-content" class="flex-1 overflow-y-auto p-5 md:p-6 tab-anim"></div>
           </div>
         </div>
       </div>
@@ -1341,7 +1072,7 @@
             </div>
             <div class="gradient-card p-4 rounded-2xl">
               <p class="text-[9px] text-blue-300 font-black uppercase tracking-widest">Atendimento</p>
-              <p class="text-sm font-bold mt-1">Assistente + WhatsApp</p>
+              <p class="text-sm font-bold mt-1">Direto no WhatsApp</p>
             </div>
           </div>
         </div>
@@ -1367,8 +1098,8 @@
               <span class="font-bold text-sm uppercase">Estratégias de Posicionamento</span>
             </div>
             <div class="flex items-center gap-4 gradient-card p-5 rounded-2xl hover:bg-white/5 transition">
-              <i data-lucide="bot" class="text-blue-400"></i>
-              <span class="font-bold text-sm uppercase">Assistente Integrado (voz + chat)</span>
+              <i data-lucide="message-circle" class="text-blue-400"></i>
+              <span class="font-bold text-sm uppercase">Atendimento Premium via WhatsApp</span>
             </div>
           </div>
         </div>
@@ -1443,7 +1174,7 @@
               <div class="w-8 h-8 rounded-lg bg-indigo-400/10 border border-indigo-300/20 grid place-items-center shrink-0"><i data-lucide="message-square-more" class="w-4 h-4 text-indigo-300"></i></div>
               <div>
                 <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300">3. Atendimento</p>
-                <p class="text-sm text-gray-300">Assistente responde e encaminha pro WhatsApp com mensagem pronta.</p>
+                <p class="text-sm text-gray-300">Contato rápido com CTA direto para WhatsApp e fechamento do projeto.</p>
               </div>
             </div>
           </div>
@@ -1500,8 +1231,8 @@
               <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Leitura</p>
             </div>
             <div class="glass p-3 rounded-xl text-center">
-              <p class="text-lg font-black text-cyan-300">+Voz</p>
-              <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Narração</p>
+              <p class="text-lg font-black text-cyan-300">+Visual</p>
+              <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Impacto</p>
             </div>
             <div class="glass p-3 rounded-xl text-center">
               <p class="text-lg font-black text-indigo-300">+CTA</p>
@@ -1509,128 +1240,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Simulador -->
-  <section id="simulador" class="py-24 bg-black/35 relative">
-    <div class="container mx-auto px-6">
-      <div class="grid lg:grid-cols-2 gap-12">
-
-        <!-- formulário -->
-        <div class="reveal glass-strong p-8 md:p-12 rounded-[36px] border-blue-500/20 h-fit relative overflow-hidden">
-          <div class="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-blue-500/20 blur-3xl"></div>
-          <div class="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-cyan-400/10 blur-3xl"></div>
-
-          <h2 class="text-3xl font-black uppercase italic mb-8">
-            Configurador <span class="text-blue-400">Tesla</span>
-          </h2>
-
-          <div class="space-y-6 relative z-10">
-            <div>
-              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block tracking-widest">Nome do Cliente</label>
-              <input type="text" id="u-name" placeholder="Ex: João da Silva"
-                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
-            </div>
-
-            <div>
-              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block">Sua Marca</label>
-              <input type="text" id="u-emp" placeholder="Nome da Empresa"
-                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
-            </div>
-
-            <div>
-              <label class="text-[9px] font-black uppercase text-blue-300 mb-2 block">Cor Predominante (Português)</label>
-              <input type="text" id="u-color-input" placeholder="Azul, Ciano, Dourado..."
-                     class="w-full bg-white/5 border-b border-white/10 py-3 outline-none focus:border-blue-500 font-bold text-white transition-all placeholder:text-gray-500">
-            </div>
-
-            <div class="grid grid-cols-4 gap-2">
-              <button type="button" onclick="quickColor('Azul')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Azul</button>
-              <button type="button" onclick="quickColor('Ciano')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Ciano</button>
-              <button type="button" onclick="quickColor('Indigo')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Índigo</button>
-              <button type="button" onclick="quickColor('Dourado')" class="glass py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition">Dourado</button>
-            </div>
-
-            <button onclick="gerarAnalise()" class="w-full tesla-btn py-6 rounded-2xl text-[10px] mt-4 uppercase">
-              Simular Projeto em Tempo Real
-            </button>
-
-            <div class="gradient-card p-4 rounded-2xl">
-              <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-300/20 grid place-items-center shrink-0">
-                  <i data-lucide="bot" class="w-4 h-4 text-blue-300"></i>
-                </div>
-                <div>
-                  <p class="text-[10px] font-black uppercase tracking-widest text-blue-300">Dica</p>
-                  <p class="text-sm text-gray-300">
-                    Preencha os campos e veja o card virar um esboço de site completo com home, produtos e finalização.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">
-              O card abaixo vira o esboço do site com seus dados
-            </p>
-          </div>
-        </div>
-
-        <!-- mockup -->
-        <div id="site-preview" class="hidden reveal">
-          <div id="mockup-root" class="browser-mockup">
-            <div id="mock-loading" class="mock-loading">
-              <div class="spinner"></div>
-              <div class="skeleton"></div>
-              <div class="skeleton" style="width:58%"></div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Gerando preview...</p>
-            </div>
-
-            <!-- browser bar -->
-            <div class="bg-gray-100 px-4 py-3 flex items-center gap-3 border-b relative z-10">
-              <div class="flex gap-1.5">
-                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-              </div>
-
-              <div class="flex-1 relative min-w-0">
-                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <i data-lucide="search" class="w-3 h-3"></i>
-                </div>
-                <input type="text" id="url-res-box" value="https://www.marca.com.br"
-                       class="w-full bg-white rounded-lg py-1.5 pl-8 pr-4 text-[9px] text-gray-500 outline-none border border-slate-200">
-              </div>
-
-              <div class="flex items-center gap-2 shrink-0">
-                <button id="mock-theme-toggle" class="text-slate-400 hover:text-slate-600 transition" title="Modo noturno">
-                  <i data-lucide="moon-star" class="w-4 h-4"></i>
-                </button>
-                <button id="mock-voice-toggle" class="text-slate-400 hover:text-slate-600 transition" title="Áudio no mockup">
-                  <i data-lucide="volume-2" class="w-4 h-4"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- tabs -->
-            <div class="bg-white border-b flex justify-around relative z-10">
-              <div onclick="switchCardTab('home')" id="tab-home" class="card-tab active">
-                <i data-lucide="house" class="w-3 h-3"></i> Home
-              </div>
-              <div onclick="switchCardTab('produtos')" id="tab-produtos" class="card-tab">
-                <i data-lucide="shopping-bag" class="w-3 h-3"></i> Produtos
-              </div>
-              <div onclick="switchCardTab('finalizar')" id="tab-finalizar" class="card-tab">
-                <i data-lucide="check-circle-2" class="w-3 h-3"></i> Finalizar
-              </div>
-            </div>
-
-            <!-- content -->
-            <div id="card-content" class="flex-1 overflow-y-auto p-5 md:p-6 tab-anim"></div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
@@ -1653,8 +1262,8 @@
             <a href="https://wa.me/5533984684394" target="_blank" class="tesla-btn px-6 py-5 rounded-2xl text-center text-[10px]">
               Falar no WhatsApp Agora
             </a>
-            <button onclick="openAiPanel(true)" class="glass px-6 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition">
-              Abrir Assistente
+            <button onclick="document.getElementById('simulador').scrollIntoView({behavior:'smooth'})" class="glass px-6 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition">
+              Ir para o Simulador
             </button>
           </div>
         </div>
@@ -1757,11 +1366,6 @@
       mockDark: false
     };
 
-    let mockVoiceEnabled = true;
-    let globalVoiceEnabled = true;
-    let speechReady = false;
-    const spokenSectionIds = new Set();
-
     const tabOrder = ["home","produtos","finalizar"];
 
     function safeBrandUrl(brand){
@@ -1790,91 +1394,13 @@
       return [
         { title:`Módulo 3D ${prefix}`, sub:"Premium Edition", icon:"box", badge:"3D" },
         { title:"Sistema Tesla 2.0", sub:"Velocidade Máxima", icon:"zap", badge:"Speed" },
-        { title:"Vitrine Inteligente", sub:"Conversão Alta", icon:"store", badge:"AI" },
-        { title:"Landing Imersiva", sub:"Experiência 2026", icon:"sparkles", badge:"UX" },
+        { title:"Vitrine Inteligente", sub:"Conversão Alta", icon:"store", badge:"UX" },
+        { title:"Landing Imersiva", sub:"Experiência 2026", icon:"sparkles", badge:"Elite" },
         { title:"SEO 2026", sub:"Dominar Google", icon:"trending-up", badge:"SEO" },
-        { title:"Assistente Pro", sub:"Atendimento 24h", icon:"message-circle", badge:"Bot" },
+        { title:"Checkout Premium", sub:"Finalização Rápida", icon:"credit-card", badge:"Sales" },
         { title:"Dashboard Live", sub:"Dados em Tempo Real", icon:"bar-chart-3", badge:"Data" },
-        { title:"Checkout Premium", sub:"Finalização Rápida", icon:"credit-card", badge:"Sales" }
+        { title:"Catálogo Premium", sub:"Vitrine Visual", icon:"shopping-bag", badge:"Store" }
       ];
-    }
-
-    /* =========================================
-       VOZ: mais “humana”
-       (depende das vozes do navegador — aqui a gente escolhe a melhor pt-BR disponível)
-    ========================================= */
-    function pickBestVoicePtBR(){
-      if(!("speechSynthesis" in window) || !window.speechSynthesis.getVoices) return null;
-      const voices = window.speechSynthesis.getVoices() || [];
-      const pt = voices.filter(v => /pt/i.test(v.lang));
-      const ptBR = pt.filter(v => /pt-BR/i.test(v.lang));
-
-      const rank = (v) => {
-        const n = (v.name || "").toLowerCase();
-        let score = 0;
-        if(/pt-br/i.test(v.lang)) score += 50;
-        if(n.includes("natural")) score += 35;
-        if(n.includes("google")) score += 25;
-        if(n.includes("microsoft")) score += 20;
-        if(n.includes("brasil")) score += 10;
-        return score;
-      };
-
-      const list = (ptBR.length ? ptBR : pt).sort((a,b) => rank(b)-rank(a));
-      return list[0] || null;
-    }
-
-    function speakText(text, opts={}){
-      if(!globalVoiceEnabled) return;
-      if(!("speechSynthesis" in window)) return;
-      try{
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = "pt-BR";
-
-        /* Ajuste “humano”: levemente mais quente e natural */
-        u.rate = opts.rate ?? 1.02;
-        u.pitch = opts.pitch ?? 1.08;
-        u.volume = opts.volume ?? 0.95;
-
-        const best = pickBestVoicePtBR();
-        if(best) u.voice = best;
-
-        window.speechSynthesis.speak(u);
-      }catch(e){}
-    }
-
-    function userGestureUnlockSpeech(){
-      if(speechReady) return;
-      speechReady = true;
-      window.removeEventListener("click", userGestureUnlockSpeech);
-      window.removeEventListener("keydown", userGestureUnlockSpeech);
-      window.removeEventListener("touchstart", userGestureUnlockSpeech);
-
-      // boas-vindas suaves (só uma vez, depois do 1º clique)
-      setTimeout(() => {
-        if(globalVoiceEnabled){
-          speakText("Boas-vindas. Se quiser, eu posso narrar as seções e te ajudar a simular seu site.");
-        }
-      }, 180);
-    }
-    window.addEventListener("click", userGestureUnlockSpeech, { passive:true });
-    window.addEventListener("keydown", userGestureUnlockSpeech, { passive:true });
-    window.addEventListener("touchstart", userGestureUnlockSpeech, { passive:true });
-
-    function narrateSection(id){
-      if(!globalVoiceEnabled) return;
-      if(spokenSectionIds.has(id)) return;
-      spokenSectionIds.add(id);
-
-      const lines = {
-        hero: "Você está no início do site. Aqui fica a identidade e os botões principais.",
-        sobre: "Agora você está na seção sobre e serviços. Aqui a pessoa entende o que você oferece.",
-        ecossistema: "Essa parte mostra o ecossistema digital e o fluxo de conversão.",
-        simulador: "Chegamos no simulador. Preencha nome, marca e cor para gerar o esboço do site."
-      };
-
-      if(lines[id]) speakText(lines[id], { rate: 1.02, pitch: 1.08 });
     }
 
     /* =========================================
@@ -2047,10 +1573,10 @@
 
             <div class="rounded-xl p-3 border min-w-0" style="border-color:var(--mock-border); background:var(--mock-panel)">
               <div class="flex items-center gap-2 mb-2">
-                <i data-lucide="bot" class="w-4 h-4 user-theme-text shrink-0"></i>
-                <p class="text-[10px] font-black uppercase truncate" style="color:var(--mock-text)">Assistente</p>
+                <i data-lucide="message-circle" class="w-4 h-4 user-theme-text shrink-0"></i>
+                <p class="text-[10px] font-black uppercase truncate" style="color:var(--mock-text)">Atendimento</p>
               </div>
-              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">Chat + narração por voz (se disponível no navegador).</p>
+              <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">CTA e contato direto para WhatsApp.</p>
             </div>
 
             <div class="rounded-xl p-3 border min-w-0" style="border-color:var(--mock-border); background:var(--mock-panel)">
@@ -2200,12 +1726,12 @@
         <div class="mini-panel p-4 mb-4">
           <div class="flex items-start gap-3">
             <div class="w-9 h-9 rounded-xl user-theme-bg-soft border grid place-items-center shrink-0" style="border-color:var(--mock-border)">
-              <i data-lucide="bot" class="w-4 h-4 user-theme-text"></i>
+              <i data-lucide="message-circle" class="w-4 h-4 user-theme-text"></i>
             </div>
             <div class="min-w-0">
-              <p class="text-[9px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Assistente Integrado</p>
+              <p class="text-[9px] font-black uppercase tracking-widest" style="color:var(--mock-muted)">Canal de Atendimento</p>
               <p class="text-[10px] leading-relaxed" style="color:var(--mock-muted)">
-                Chat + botão para WhatsApp com mensagem pronta.
+                Encaminhamento direto para o WhatsApp com orçamento personalizado.
               </p>
             </div>
           </div>
@@ -2237,16 +1763,6 @@
       if(tab === "finalizar") return renderFinalizarTab();
     }
 
-    function mockNarrate(tab){
-      if(!mockVoiceEnabled || !globalVoiceEnabled) return;
-      const map = {
-        home: "Aba home. Apresentação principal, busca e painel de métricas.",
-        produtos: "Aba produtos. Duas fileiras de carrosséis com cards de vitrine.",
-        finalizar: "Aba finalizar. Resumo da análise e botão para WhatsApp."
-      };
-      if(map[tab]) speakText(map[tab], { rate:1.02, pitch:1.08 });
-    }
-
     function animateTabSwitch(toTab, force=false){
       const content = document.getElementById("card-content");
       const fromTab = currentTabData.activeTab || "home";
@@ -2255,7 +1771,6 @@
         setTabActive(toTab);
         content.classList.remove("tab-out-left","tab-out-right");
         renderTab(toTab);
-        mockNarrate(toTab);
         return;
       }
 
@@ -2267,7 +1782,6 @@
         setTabActive(toTab);
         content.classList.remove("tab-out-left","tab-out-right");
         renderTab(toTab);
-        mockNarrate(toTab);
       }, 170);
     }
 
@@ -2278,8 +1792,7 @@
     /* =========================================
        WhatsApp (mensagem pronta)
     ========================================= */
-    const AI_WHATS = "5533984684394";
-    let aiLastUserText = "";
+    const WHATS_NUMBER = "5533984684394";
 
     function buildWhatsMsg(extra=""){
       const emp = (currentTabData.emp && currentTabData.emp !== "SUA MARCA") ? currentTabData.emp : "";
@@ -2290,19 +1803,17 @@
       if(name) msg += ` Meu nome é ${name}.`;
       if(emp) msg += ` Minha marca é ${emp}.`;
       if(color) msg += ` Cor/identidade: ${color}.`;
-      if(aiLastUserText) msg += ` Dúvida: "${aiLastUserText}".`;
       if(extra) msg += ` ${extra}`;
       return msg;
     }
 
-    function openWhatsFromBot(extra=""){
+    function openWhats(extra=""){
       const msg = encodeURIComponent(buildWhatsMsg(extra));
-      window.open(`https://wa.me/${AI_WHATS}?text=${msg}`, "_blank");
+      window.open(`https://wa.me/${WHATS_NUMBER}?text=${msg}`, "_blank");
     }
 
     function whatsAction(){
-      // mantém o botão do mockup finalização
-      openWhatsFromBot("Gostei da simulação. Vamos fechar?");
+      openWhats("Gostei da simulação e quero avançar no projeto.");
     }
 
     /* =========================================
@@ -2335,13 +1846,10 @@
       switchCardTab("home", true);
       applyMockTheme();
       refreshIcons();
-
-      // dá uma mensagem no assistente (e sem “mensagenzinha” flutuante)
-      aiAddMessage("bot", `Simulação pronta para "${emp}" (${color}). Quer que eu te explique Home, Produtos ou Finalização?`);
     }
 
     /* =========================================
-       MODO ESCURO MOCKUP + ÁUDIO MOCKUP
+       MODO ESCURO MOCKUP
     ========================================= */
     function applyMockTheme(){
       const root = document.getElementById("mockup-root");
@@ -2351,7 +1859,6 @@
 
     function initMockControls(){
       const themeBtn = document.getElementById("mock-theme-toggle");
-      const voiceBtn = document.getElementById("mock-voice-toggle");
       if(themeBtn){
         themeBtn.addEventListener("click", () => {
           currentTabData.mockDark = !currentTabData.mockDark;
@@ -2361,17 +1868,6 @@
             : `<i data-lucide="moon-star" class="w-4 h-4"></i>`;
           refreshIcons();
           switchCardTab(currentTabData.activeTab || "home", true);
-        }, { passive:true });
-      }
-
-      if(voiceBtn){
-        voiceBtn.addEventListener("click", () => {
-          mockVoiceEnabled = !mockVoiceEnabled;
-          voiceBtn.innerHTML = mockVoiceEnabled
-            ? `<i data-lucide="volume-2" class="w-4 h-4"></i>`
-            : `<i data-lucide="volume-x" class="w-4 h-4"></i>`;
-          refreshIcons();
-          if(mockVoiceEnabled) speakText("Áudio do mockup ativado.");
         }, { passive:true });
       }
     }
@@ -2557,7 +2053,6 @@
         const heroObserver = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             heroInView = entry.isIntersecting;
-            if(entry.isIntersecting) narrateSection("hero");
             if(!heroInView && photoCard){
               photoCard.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
             }
@@ -2566,204 +2061,13 @@
         heroObserver.observe(hero);
       }
 
-      ["sobre","ecossistema","simulador"].forEach(id => {
-        const el = document.getElementById(id);
-        if(!el) return;
+      const sim = document.getElementById("simulador");
+      if(sim){
         const o = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if(entry.isIntersecting) narrateSection(id);
-            if(id === "simulador") setSimulatorFocusMode(entry.isIntersecting);
-          });
+          entries.forEach(entry => setSimulatorFocusMode(entry.isIntersecting));
         }, { threshold: 0.22 });
-        o.observe(el);
-      });
-    }
-
-    /* =========================================
-       ASSISTENTE (chat + botão WhatsApp)
-    ========================================= */
-    let aiOpenedOnce = false;
-    let aiWelcomeSent = false;
-
-    function aiRefs(){
-      return {
-        panel: document.getElementById("ai-panel"),
-        openBtn: document.getElementById("ai-open"),
-        closeBtn: document.getElementById("ai-close"),
-        msgs: document.getElementById("ai-messages"),
-        input: document.getElementById("ai-input"),
-        send: document.getElementById("ai-send"),
-        clear: document.getElementById("ai-clear"),
-        quick: document.getElementById("ai-quick"),
-        voiceToggle: document.getElementById("ai-voice-toggle"),
-        whatsBig: document.getElementById("ai-whats-big"),
-      };
-    }
-
-    function aiScrollBottom(){
-      const { msgs } = aiRefs();
-      if(msgs) msgs.scrollTop = msgs.scrollHeight;
-    }
-
-    function escapeHTML(s){
-      return (s || "").replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
-    function aiAddMessage(type, text){
-      const { msgs } = aiRefs();
-      if(!msgs) return;
-
-      const div = document.createElement("div");
-      div.className = `ai-msg ${type}`;
-
-      if(type === "user"){
-        div.textContent = text;
-        msgs.appendChild(div);
-        aiScrollBottom();
-        return;
+        o.observe(sim);
       }
-
-      // Bot: texto + botões (WhatsApp de verdade)
-      const safe = escapeHTML(text);
-      div.innerHTML = `
-        <div>${safe}</div>
-        <small>Assistente • pode te encaminhar pro WhatsApp com mensagem pronta</small>
-        <div class="ai-actions">
-          <button class="primary" type="button" data-act="whats">WhatsApp agora</button>
-          <button type="button" data-act="simulador">Ir pro simulador</button>
-        </div>
-      `;
-      msgs.appendChild(div);
-
-      div.querySelector('[data-act="whats"]')?.addEventListener("click", () => openWhatsFromBot("Quero atendimento e orçamento, por favor."), { passive:true });
-      div.querySelector('[data-act="simulador"]')?.addEventListener("click", () => {
-        document.getElementById("simulador")?.scrollIntoView({ behavior:"smooth" });
-        closeAiPanel();
-      }, { passive:true });
-
-      aiScrollBottom();
-    }
-
-    function aiTypingThenReply(text){
-      const { msgs } = aiRefs();
-      if(!msgs) return;
-
-      const typing = document.createElement("div");
-      typing.className = "ai-msg bot";
-      typing.textContent = "Digitando...";
-      msgs.appendChild(typing);
-      aiScrollBottom();
-
-      setTimeout(() => {
-        typing.remove();
-        aiAddMessage("bot", text);
-      }, 520);
-    }
-
-    function aiGetReply(input){
-      const q = (input || "").toLowerCase();
-
-      if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(q)){
-        return "Boas-vindas! Eu posso te explicar os serviços, o simulador e como seria seu site 3D.";
-      }
-      if(/site 3d|3d|imersiv/.test(q)){
-        return "O site 3D entrega uma experiência visual premium, com elementos dinâmicos, sensação de profundidade e vitrine interativa.";
-      }
-      if(/servi[cç]o|oferece|faz/.test(q)){
-        return "Atos oferece sites imersivos 3D, sites institucionais estratégicos, pacotes de imagens premium e posicionamento digital.";
-      }
-      if(/simula|simulador|prot[oó]tipo/.test(q)){
-        return "No simulador você preenche nome, marca e cor. O card gera um esboço de site com Home, Produtos e Finalização.";
-      }
-      if(/valor|pre[cç]o|quanto|or[cç]amento|prazo/.test(q)){
-        return "Valor e prazo variam conforme o escopo. Me diga seu tipo de negócio e objetivo que eu te encaminho pro WhatsApp com uma mensagem pronta.";
-      }
-      if(/whatsapp|contato|falar/.test(q)){
-        return "Fechado. Clique em “WhatsApp agora” aqui no chat e já vai com mensagem pronta.";
-      }
-      if(/voz|audio|narra/.test(q)){
-        return "A narração depende do navegador ter voz pt-BR disponível. Se tiver, eu posso guiar as seções do site com voz mais natural.";
-      }
-
-      return "Entendi. Me fala qual é seu tipo de negócio e o que você quer vender (serviço/produto), que eu te direciono certinho.";
-    }
-
-    function openAiPanel(forceGreet=false){
-      const { panel, input } = aiRefs();
-      if(!panel) return;
-      panel.classList.add("open");
-
-      if(!aiWelcomeSent || forceGreet){
-        aiWelcomeSent = true;
-        aiAddMessage("bot", "Boas-vindas! Eu sou o assistente do site. Me diga sua dúvida e eu te ajudo.");
-        if(globalVoiceEnabled) speakText("Boas-vindas! Quer que eu te ajude com serviços, simulação ou orçamento?");
-      }
-
-      setTimeout(() => input && input.focus(), 50);
-      aiOpenedOnce = true;
-    }
-
-    function closeAiPanel(){
-      const { panel } = aiRefs();
-      if(!panel) return;
-      panel.classList.remove("open");
-    }
-
-    function sendAiMessage(customText=null){
-      const { input } = aiRefs();
-      const value = (customText ?? (input ? input.value : "")).trim();
-      if(!value) return;
-
-      aiLastUserText = value; // usado na mensagem pronta pro WhatsApp
-
-      aiAddMessage("user", value);
-      if(input && customText === null) input.value = "";
-
-      const reply = aiGetReply(value);
-      aiTypingThenReply(reply);
-    }
-
-    function initAiAssistant(){
-      const r = aiRefs();
-      if(!r.panel) return;
-
-      r.openBtn?.addEventListener("click", () => openAiPanel(), { passive:true });
-      r.closeBtn?.addEventListener("click", closeAiPanel, { passive:true });
-      r.send?.addEventListener("click", () => sendAiMessage(), { passive:true });
-
-      r.input?.addEventListener("keydown", (e) => {
-        if(e.key === "Enter"){
-          e.preventDefault();
-          sendAiMessage();
-        }
-      });
-
-      r.clear?.addEventListener("click", () => {
-        if(r.msgs) r.msgs.innerHTML = "";
-        aiWelcomeSent = false;
-        openAiPanel(true);
-      }, { passive:true });
-
-      r.quick?.querySelectorAll("button").forEach(btn => {
-        btn.addEventListener("click", () => {
-          openAiPanel();
-          sendAiMessage(btn.dataset.q || btn.textContent || "");
-        }, { passive:true });
-      });
-
-      r.voiceToggle?.addEventListener("click", () => {
-        globalVoiceEnabled = !globalVoiceEnabled;
-        r.voiceToggle.innerHTML = globalVoiceEnabled
-          ? `<i data-lucide="volume-2" class="w-4 h-4"></i>`
-          : `<i data-lucide="volume-x" class="w-4 h-4"></i>`;
-        refreshIcons();
-        if(globalVoiceEnabled) speakText("Narração ativada.");
-        else if("speechSynthesis" in window) window.speechSynthesis.cancel();
-      }, { passive:true });
-
-      r.whatsBig?.addEventListener("click", () => openWhatsFromBot("Quero falar com você pelo WhatsApp."), { passive:true });
     }
 
     /* =========================================
@@ -2775,22 +2079,15 @@
       initGlobalCssParticles();
       initObservers();
       initMockControls();
-      initAiAssistant();
       applyMockTheme();
 
       switchCardTab("home", true);
       refreshIcons();
 
-      // pausa animação se aba ficar em background
       document.addEventListener("visibilitychange", () => {
         if(document.hidden) stopBg3D();
         else if(!document.body.classList.contains("simulator-focus")) resumeBg3D();
       });
-
-      // garante carregamento de vozes em alguns navegadores
-      if("speechSynthesis" in window){
-        window.speechSynthesis.onvoiceschanged = () => {};
-      }
     };
   </script>
 </body>
